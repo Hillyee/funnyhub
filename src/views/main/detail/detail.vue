@@ -1,13 +1,13 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
-import { useRoute } from "vue-router"
-import navHeader from "@/components/nav-header.vue"
-import { getMomentByIdRequest } from "@/service/main/moment"
+import { useRoute } from 'vue-router'
+import navHeader from '@/components/global-header.vue'
+import { getMomentByIdRequest } from '@/service/main/moment'
 
 const route = useRoute()
 const momentData = ref({})
 getMomentByIdRequest(route.params.id as string).then(res => {
-  console.log(res.data);
+  console.log(res.data)
   momentData.value = res.data
 })
 </script>
@@ -15,9 +15,7 @@ getMomentByIdRequest(route.params.id as string).then(res => {
 <template>
   <div class="detail">
     <nav-header></nav-header>
-    <div class="detail-content">
-      
-    </div>
+    <div class="detail-content"></div>
   </div>
 </template>
 

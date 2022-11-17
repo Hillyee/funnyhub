@@ -20,12 +20,14 @@ declare module '@vue/runtime-core' {
     ElInput: typeof import('element-plus/es')['ElInput']
     ElLink: typeof import('element-plus/es')['ElLink']
     ElRow: typeof import('element-plus/es')['ElRow']
+    GlobalHeader: typeof import('./src/components/global-header.vue')['default']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     InfiniteScroll: typeof import('element-plus/es')['ElInfiniteScroll']
     NavCard: typeof import('./src/components/nav-card.vue')['default']
     NavHeader: typeof import('./src/components/nav-header.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    ValidateInput: typeof import('./src/components/validate-input.vue')['default']
   }
 }
 
