@@ -1,10 +1,9 @@
-import { createPinia } from "pinia"
-import { useLoginStore } from "./login"
-import { useRegisterStore } from "./register"
-import { useMomentStore } from "./main/moment"
+import { createPinia } from 'pinia'
+import { useLoginStore } from './login'
+import { useMomentStore } from './main/moment'
 
 const pinia = createPinia()
 
-export { useLoginStore, useRegisterStore, useMomentStore }
+export { useLoginStore, useMomentStore }
 
 export default pinia

@@ -7,6 +7,9 @@ class LocalCache {
   getCache(key: string) {
     return window.localStorage.getItem(key)
   }
+  removeCache(key: string) {
+    window.localStorage.removeItem(key)
+  }
 }
 
 export default new LocalCache()

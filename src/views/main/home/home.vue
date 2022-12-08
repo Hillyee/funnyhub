@@ -55,13 +55,13 @@ const handleCardClick = () => {
 
 // 无限滚动
 const load = () => {
-  listQuery.offset += 10
-  momentListRequest(listQuery.limit, listQuery.offset).then(res => {
-    res.data?.forEach(item => {
-      momentList.value.push(item)
-    })
-    console.log(momentList.value)
-  })
+  // listQuery.offset += 10
+  // momentListRequest(listQuery.limit, listQuery.offset).then(res => {
+  //   res.data?.forEach(item => {
+  //     momentList.value.push(item)
+  //   })
+  //   console.log(momentList.value)
+  // })
 }
 </script>
 

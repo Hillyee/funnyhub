@@ -1,9 +1,8 @@
 <template>
   <div class="form-floating">
     <input
-      id="floatingInput"
       class="form-control"
-      :value="modelValue"
+      v-model="inputRef.val"
       v-bind="$attrs"
       @blur="validateInput"
       :class="{ 'is-invalid': inputRef.error }"
@@ -14,7 +13,15 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps, PropType, reactive } from 'vue'
+import {
+  defineProps,
+  defineEmits,
+  defineExpose,
+  PropType,
+  reactive,
+  ref,
+  watch,
+} from 'vue'
 import { RulesProp } from './types'
 const props = defineProps({
   modelValue: String,
@@ -25,11 +32,7 @@ const props = defineProps({
     type: String,
   },
 })
-
-// 定义规则
-const emailReg =
-  /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
-const passwordReg = /^(?=.*[a-z])(?=.*\d)(?=.*\W).{8,12}$/g
+const emit = defineEmits(['update:modelValue'])
 
 const inputRef = reactive({
   val: props.modelValue || '',
@@ -37,8 +40,19 @@ const inputRef = reactive({
   message: '',
 })
 
+// watch
+watch(
+  () => props.modelValue,
+  () => {
+    inputRef.val = props.modelValue as string
+  }
+)
+// 定义规则
+const emailReg = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/
+// const passwordReg = /^(?=.*[a-z])(?=.*\d)(?=.*\W).{8,12}$/g
+
 const validateInput = () => {
-  console.log(inputRef.val)
+  emit('update:modelValue', inputRef.val)
 
   if (props.rules) {
     const allPassed = props.rules.every(rule => {
@@ -51,9 +65,9 @@ const validateInput = () => {
         case 'email':
           passed = emailReg.test(inputRef.val)
           break
-        case 'password':
-          passed = passwordReg.test(inputRef.val)
-          break
+        // case 'password':
+        //   passed = passwordReg.test(inputRef.val)
+        //   break
         default:
           break
       }
@@ -65,6 +79,10 @@ const validateInput = () => {
   }
   return true
 }
+
+defineExpose({
+  validateInput,
+})
 </script>
 
 <style scoped>
