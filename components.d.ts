@@ -23,6 +23,8 @@ declare module '@vue/runtime-core' {
     GlobalHeader: typeof import('./src/components/global-header.vue')['default']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     InfiniteScroll: typeof import('element-plus/es')['ElInfiniteScroll']
+    Loader: typeof import('./src/components/loader.vue')['default']
+    Message: typeof import('./src/components/Message.vue')['default']
     NavCard: typeof import('./src/components/nav-card.vue')['default']
     NavHeader: typeof import('./src/components/nav-header.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']

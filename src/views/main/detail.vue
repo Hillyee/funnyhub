@@ -1,3 +1,10 @@
+<template>
+  <div class="detail">
+    <!-- <nav-header></nav-header> -->
+    <div class="detail-content">文章详情页</div>
+  </div>
+</template>
+
 <script lang="ts" setup>
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
@@ -11,12 +18,5 @@ getMomentByIdRequest(route.params.id as string).then(res => {
   momentData.value = res.data
 })
 </script>
-
-<template>
-  <div class="detail">
-    <nav-header></nav-header>
-    <div class="detail-content"></div>
-  </div>
-</template>
 
 <style scoped lang="less"></style>

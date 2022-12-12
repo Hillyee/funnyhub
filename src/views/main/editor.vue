@@ -1,24 +1,24 @@
 <script lang="ts" setup>
-import { ref } from "vue"
-import { useRouter } from "vue-router"
-import { useMomentStore } from "@/store"
-import LocalCache from "@/utils/cache"
-import { ElMessage } from "element-plus"
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { useMomentStore } from '@/store'
+import LocalCache from '@/utils/cache'
+import { ElMessage } from 'element-plus'
 
-const content = ref("")
-const title = ref("")
+const content = ref('')
+const title = ref('')
 
 const router = useRouter()
 const handleGoHomeClick = () => {
-  router.push("/home")
+  router.push('/home')
 }
 const momentStore = useMomentStore()
 const handlePublicClick = () => {
-  const token = LocalCache.getCache("token")
+  const token = LocalCache.getCache('token')
   if (!token) {
-    router.push("/login")
+    router.push('/login')
   } else if (!content.value || !title.value) {
-    console.log("不能为空")
+    console.log('不能为空')
   } else {
     momentStore.momentPublicAction(title.value, content.value)
   }

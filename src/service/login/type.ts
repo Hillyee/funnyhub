@@ -3,10 +3,6 @@ export interface IAccount {
   password: string
   name?: string
 }
-export interface ILoginResult {
-  code: number
-  data: Data
-}
 export interface Data {
   id: number
   name: string

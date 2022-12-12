@@ -1,4 +1,5 @@
 export interface IDataType<T = any> {
   code: number
-  data: T
+  data?: T
+  message?: string
 }

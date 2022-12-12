@@ -1,8 +1,9 @@
 import myRequest from '../index'
-import { IAccount, ILoginResult, IRegisterResult } from './type'
+import { IAccount, IRegisterResult } from './type'
+import { IDataType } from '@/service/type'
 
 export const userLoginRequest = (data: IAccount) => {
-  return myRequest.post<ILoginResult>({
+  return myRequest.post<IDataType>({
     url: '/login',
     data,
   })

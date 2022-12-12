@@ -1,10 +1,10 @@
-import type { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios"
-import axios from "axios"
+import type { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
+import axios from 'axios'
 
 interface MyRequestInterceptor {
   requestInterceptor?: (config: AxiosRequestConfig) => AxiosRequestConfig
   requestInterceptorCatch?: (error: any) => any
-  responseInterceptor?: (config: AxiosRequestConfig) => AxiosRequestConfig
+  responseInterceptor?: (config: AxiosResponse) => AxiosResponse
   responseInterceptorCatch?: (error: any) => any
 }
 
@@ -29,7 +29,7 @@ class MyRequset {
     )
 
     // 响应拦截器
-    this.instance.interceptors.request.use(
+    this.instance.interceptors.response.use(
       this.interceptors?.responseInterceptor,
       this.interceptors?.responseInterceptorCatch
     )
@@ -65,35 +65,34 @@ class MyRequset {
       // 对某个请求的拦截器
       if (config.interceptors?.requestInterceptor) {
         // 可以对某个请求设置是否显示loading效果
-        
         config = config.interceptors.requestInterceptor(config)
       }
       // request请求
       this.instance
         .request(config)
-        .then((res) => {
+        .then(res => {
           resolve(res.data)
         })
-        .catch((error) => {
+        .catch(error => {
           console.log(error.response.data)
         })
     })
   }
 
   get<T = any>(config: MyRequsetConfig): Promise<T> {
-    return this.request<T>({ ...config, method: "GET" })
+    return this.request<T>({ ...config, method: 'GET' })
   }
 
   post<T = any>(config: MyRequsetConfig): Promise<T> {
-    return this.request<T>({ ...config, method: "POST" })
+    return this.request<T>({ ...config, method: 'POST' })
   }
 
   delete<T = any>(config: MyRequsetConfig): Promise<T> {
-    return this.request<T>({ ...config, method: "DELETE" })
+    return this.request<T>({ ...config, method: 'DELETE' })
   }
 
   patch<T = any>(config: MyRequsetConfig): Promise<T> {
-    return this.request<T>({ ...config, method: "PATCH" })
+    return this.request<T>({ ...config, method: 'PATCH' })
   }
 }
 
