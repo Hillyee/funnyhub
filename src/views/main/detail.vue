@@ -8,7 +8,7 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
-import navHeader from '@/components/global-header.vue'
+import navHeader from '@/components/GlobalHeader.vue'
 import { getMomentByIdRequest } from '@/service/main/moment'
 
 const route = useRoute()

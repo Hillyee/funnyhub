@@ -59,7 +59,7 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue'
-import validateInput from '@/components/validate-input.vue'
+import validateInput from '@/components/ValidateInput.vue'
 import { RulesProp } from '@/components/types'
 import { useLoginStore } from '@/store'
 import { IAccount } from '@/service/login/type'

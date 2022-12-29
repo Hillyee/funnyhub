@@ -4,7 +4,10 @@ import register from '@/router/register/register'
 import detail from '@/router/main/detail'
 import editor from '@/router/main/editor'
 import user from '@/router/main/user'
+import setting from '@/router/main/setting'
 import { useGlobalStore } from '@/store'
+import LocalCache from '@/utils/cache'
+import createMessage from '@/components/createMessage'
 
 const routes: RouteRecordRaw[] = [
   {
@@ -19,12 +22,13 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/home',
     name: 'home',
-    component: () => import('@/views/main/home.vue'),
+    component: () => import('@/views/main/Home.vue'),
   },
   detail,
   register,
   editor,
   user,
+  setting,
 ]
 
 const router = createRouter({
@@ -35,16 +39,19 @@ const router = createRouter({
 router.beforeEach((to, from) => {
   const globalStore = useGlobalStore()
   globalStore.setLoading()
-  setTimeout(() => {
-    globalStore.setLoading()
-  }, 300)
-
-  // if (to.name !== "login") {
-  //   const token = LocalCache.getCache("token")
-  //   if (!token) {
-  //     return { name: "login" }
-  //   }
-  // }
+  const token = LocalCache.getCache('token')
+  if (
+    to.path == '/editor' ||
+    to.path == '/user/setting' ||
+    to.path == '/user'
+  ) {
+    if (!token) {
+      createMessage('请先登录!', 'default')
+      setTimeout(() => {
+        return { name: 'login' }
+      }, 300)
+    }
+  }
 })
 
 export default router

@@ -9,9 +9,20 @@
           </div>
           <div class="col-sm-4 offset-md-1 py-4">
             <ul class="list-unstyled fs-5">
-              <li><a href="#" class="text-white">编写文章</a></li>
-              <li><a href="#" class="text-white">个人主页</a></li>
-              <li><a href="#" class="text-white">退出登录</a></li>
+              <li>
+                <button class="btn btn-link text-white fs-5">编写文章</button>
+              </li>
+              <li>
+                <button class="btn btn-link text-white fs-5">个人主页</button>
+              </li>
+              <li>
+                <button
+                  class="btn btn-link text-white fs-5"
+                  @click="handleLogout"
+                >
+                  退出登录
+                </button>
+              </li>
             </ul>
           </div>
         </div>
@@ -19,7 +30,7 @@
     </div>
     <div class="navbar navbar-dark bg-dark shadow-sm">
       <div class="container">
-        <img :src="user.avatar_url" class="avatar" alt="头像" />
+        <img :src="user.avatar_url" class="rounded-circle avatar" alt="头像" />
         <a href="#" class="navbar-brand d-flex align-items-center">
           <strong>Welcome back！{{ user.name }}🌞</strong>
         </a>
@@ -67,18 +78,24 @@
 <script lang="ts" setup>
 import { PropType } from 'vue'
 import { UserProps } from './types'
+import { useLoginStore, useGlobalStore } from '@/store'
 const props = defineProps({
   user: {
     type: Object as PropType<UserProps>,
     required: true,
   },
 })
+const loginStore = useLoginStore()
+const globalStore = useGlobalStore()
+const handleLogout = () => {
+  globalStore.setLoading()
+  loginStore.logout()
+}
 </script>
 
 <style scoped lang="less">
 .avatar {
   width: 50px;
   height: 50px;
-  border-radius: 100px;
 }
 </style>

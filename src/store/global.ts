@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia'
-import { IDataType } from '@/service/type'
 
 export interface errorResultType {
   status?: boolean
@@ -18,6 +17,9 @@ export const useGlobalStore = defineStore('global', {
   actions: {
     setLoading() {
       this.isLoading = !this.isLoading
+      setTimeout(() => {
+        this.isLoading = !this.isLoading
+      }, 300)
     },
     setError(e: errorResultType) {
       this.error = { ...e }

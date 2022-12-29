@@ -6,13 +6,22 @@ import router from '@/router'
 import passwordCode from '@/utils/base64'
 import createMessage from '@/components/createMessage'
 
+export interface IUserInfo {
+  isLogin: boolean
+  id: number
+  name: string
+  avatar_url?: string
+  email: string
+  token: string
+}
+
 export const useLoginStore = defineStore('login', {
   state: () => {
     return {
       token: '',
       userInfo: {
         isLogin: false,
-      },
+      } as IUserInfo,
     }
   },
   actions: {
@@ -58,6 +67,16 @@ export const useLoginStore = defineStore('login', {
       if (userInfo) {
         this.userInfo = JSON.parse(userInfo)
       }
+    },
+    logout() {
+      this.userInfo.isLogin = false
+      this.token = ''
+      LocalCache.removeCache('token')
+      LocalCache.removeCache('userInfo')
+    },
+    updateUserAvatar(url: string) {
+      this.userInfo.avatar_url = url
+      LocalCache.setCache('userInfo', JSON.stringify(this.userInfo))
     },
   },
 })

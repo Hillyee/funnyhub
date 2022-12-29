@@ -20,7 +20,7 @@ declare module '@vue/runtime-core' {
     ElInput: typeof import('element-plus/es')['ElInput']
     ElLink: typeof import('element-plus/es')['ElLink']
     ElRow: typeof import('element-plus/es')['ElRow']
-    GlobalHeader: typeof import('./src/components/global-header.vue')['default']
+    GlobalHeader: typeof import('./src/components/GlobalHeader.vue')['default']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     InfiniteScroll: typeof import('element-plus/es')['ElInfiniteScroll']
     Loader: typeof import('./src/components/loader.vue')['default']
@@ -29,7 +29,11 @@ declare module '@vue/runtime-core' {
     NavHeader: typeof import('./src/components/nav-header.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
-    ValidateInput: typeof import('./src/components/validate-input.vue')['default']
+    Uploader: typeof import('./src/components/Uploader.vue')['default']
+    ValidateForm: typeof import('./src/components/ValidateForm.vue')['default']
+    ValidateInput: typeof import('./src/components/ValidateInput.vue')['default']
+    'ValidateInput copy': typeof import('./src/components/ValidateInput copy.vue')['default']
+    ValidateInput2: typeof import('./src/components/ValidateInput2.vue')['default']
   }
 }
 

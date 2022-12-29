@@ -14,7 +14,6 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps } from 'vue'
 import useDOMCreate from '@/utils/useDOMCreate'
 const props = defineProps({
   text: {

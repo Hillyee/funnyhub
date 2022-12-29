@@ -46,7 +46,7 @@
 import { onMounted, ref } from 'vue'
 import { useLoginStore } from '@/store'
 import '@/style/signin.css'
-import validateInput from '@/components/validate-input.vue'
+import validateInput from '@/components/ValidateInput.vue'
 import { RulesProp } from '@/components/types'
 import { IAccount } from '@/service/login/type'
 import LocalCache from '@/utils/cache'

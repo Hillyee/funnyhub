@@ -4,13 +4,13 @@
     <global-header :user="userInfo"></global-header>
     <!-- loading -->
     <loader v-if="isLoading"></loader>
-    <router-view></router-view>
+    <router-view v-if="isRouterActive"></router-view>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { computed, watch } from 'vue'
-import globalHeader from '@/components/global-header.vue'
+import { computed, watch, ref, nextTick, provide } from 'vue'
+import globalHeader from '@/components/GlobalHeader.vue'
 import loader from '@/components/loader.vue'
 import { useLoginStore, useGlobalStore } from '@/store'
 import createMessage from '@/components/createMessage'
@@ -31,6 +31,16 @@ watch(
     }
   }
 )
+
+const isRouterActive = ref(true)
+
+const reload = () => {
+  isRouterActive.value = false
+  nextTick(function () {
+    isRouterActive.value = true
+  })
+}
+provide('reload', reload)
 </script>
 
 <style>

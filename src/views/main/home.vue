@@ -248,10 +248,10 @@ const listQuery = reactive({
 
 let momentList = ref()
 
-momentListRequest(listQuery.limit, listQuery.offset).then(res => {
-  momentList.value = res.data
-  // console.log(momentList.value)
-})
+// momentListRequest(listQuery.limit, listQuery.offset).then(res => {
+//   momentList.value = res.data
+//   // console.log(momentList.value)
+// })
 
 const router = useRouter()
 
