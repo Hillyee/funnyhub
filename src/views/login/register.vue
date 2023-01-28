@@ -61,7 +61,7 @@
 import { ref } from 'vue'
 import validateInput from '@/components/ValidateInput.vue'
 import { RulesProp } from '@/components/types'
-import { useLoginStore } from '@/store'
+import { useUserStore } from '@/store'
 import { IAccount } from '@/service/login/type'
 import '@/style/signin.css'
 // 用户名
@@ -94,7 +94,7 @@ const nameInputRef = ref<any>(null)
 const emailInputRef = ref<any>(null)
 const passwordInputRef = ref<any>(null)
 const passwordInputRef2 = ref<any>(null)
-const loginStore = useLoginStore()
+const loginStore = useUserStore()
 const handleRegisterClick = () => {
   // 点击登录先校验一下
   const validateEmailRes = emailInputRef.value.validateInput()

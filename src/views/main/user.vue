@@ -248,8 +248,8 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useLoginStore } from '@/store'
-const loginStore = useLoginStore()
+import { useUserStore } from '@/store'
+const loginStore = useUserStore()
 const userInfo = computed(() => loginStore.userInfo)
 console.log(userInfo.value)
 </script>

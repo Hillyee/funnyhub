@@ -44,7 +44,7 @@
 </template>
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue'
-import { useLoginStore } from '@/store'
+import { useUserStore } from '@/store'
 import '@/style/signin.css'
 import validateInput from '@/components/ValidateInput.vue'
 import { RulesProp } from '@/components/types'
@@ -79,7 +79,7 @@ const passwordRules: RulesProp = [{ type: 'required', message: '密码不能为�
 // 记住密码
 const isRemember = ref(false)
 
-const loginStore = useLoginStore()
+const loginStore = useUserStore()
 const emailInputRef = ref<any>(null)
 const passwordInputRef = ref<any>(null)
 const handleLoginClick = () => {

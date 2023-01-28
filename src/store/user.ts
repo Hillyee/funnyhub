@@ -5,6 +5,8 @@ import LocalCache from '@/utils/cache'
 import router from '@/router'
 import passwordCode from '@/utils/base64'
 import createMessage from '@/components/createMessage'
+import { UserInfoType } from '@/service/main/setting'
+import { updateUserInfo } from '@/service/main/setting'
 
 export interface IUserInfo {
   isLogin: boolean
@@ -15,7 +17,7 @@ export interface IUserInfo {
   token: string
 }
 
-export const useLoginStore = defineStore('login', {
+export const useUserStore = defineStore('user', {
   state: () => {
     return {
       token: '',
@@ -77,6 +79,15 @@ export const useLoginStore = defineStore('login', {
     updateUserAvatar(url: string) {
       this.userInfo.avatar_url = url
       LocalCache.setCache('userInfo', JSON.stringify(this.userInfo))
+    },
+    async updateUserAction(data: UserInfoType) {
+      const res = await updateUserInfo(data)
+      if (res.code == 200) {
+        createMessage('更新成功', 'success', 3000)
+        router.push('/user')
+      } else {
+        createMessage('更新失败', 'error', 3000)
+      }
     },
   },
 })

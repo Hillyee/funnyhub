@@ -9,6 +9,14 @@ export interface AvatarType {
   avatarUrl: string
 }
 
+export interface UserInfoType {
+  id: number
+  name: string
+  avatarUrl?: string
+  email: string
+  sign: string
+}
+
 export const uploadAvatar = (data: FormData) => {
   return myRequest.post<IDataType<AvatarType>>({
     url: '/upload/avatar',
@@ -16,5 +24,18 @@ export const uploadAvatar = (data: FormData) => {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
+  })
+}
+
+export const getUserInfoById = (id: number) => {
+  return myRequest.get<IDataType<UserInfoType>>({
+    url: `/users/message?id=${id}`,
+  })
+}
+
+export const updateUserInfo = (data: UserInfoType) => {
+  return myRequest.post<IDataType<UserInfoType>>({
+    url: '/users/update/user_info',
+    data,
   })
 }

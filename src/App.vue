@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- 导航列表 -->
-    <global-header :user="userInfo"></global-header>
+    <global-header v-if="isRouterActive" :user="userInfo"></global-header>
     <!-- loading -->
     <loader v-if="isLoading"></loader>
     <router-view v-if="isRouterActive"></router-view>
@@ -12,13 +12,13 @@
 import { computed, watch, ref, nextTick, provide } from 'vue'
 import globalHeader from '@/components/GlobalHeader.vue'
 import loader from '@/components/loader.vue'
-import { useLoginStore, useGlobalStore } from '@/store'
+import { useUserStore, useGlobalStore } from '@/store'
 import createMessage from '@/components/createMessage'
 
 const globalStore = useGlobalStore()
 const isLoading = computed(() => globalStore.isLoading)
 
-const loginStore = useLoginStore()
+const loginStore = useUserStore()
 const userInfo = computed(() => loginStore.userInfo)
 
 const error = computed(() => globalStore.error)

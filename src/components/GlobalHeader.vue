@@ -78,14 +78,14 @@
 <script lang="ts" setup>
 import { PropType } from 'vue'
 import { UserProps } from './types'
-import { useLoginStore, useGlobalStore } from '@/store'
+import { useUserStore, useGlobalStore } from '@/store'
 const props = defineProps({
   user: {
     type: Object as PropType<UserProps>,
     required: true,
   },
 })
-const loginStore = useLoginStore()
+const loginStore = useUserStore()
 const globalStore = useGlobalStore()
 const handleLogout = () => {
   globalStore.setLoading()

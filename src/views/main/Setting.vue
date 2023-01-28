@@ -7,7 +7,7 @@
       class="d-flex align-items-center justify-content-center"
     >
       <div class="avatar-container">
-        <img v-if="avatarUrl" :src="userInfo.avatar_url" alt="头像" />
+        <img v-if="avatarVal" :src="avatarVal" alt="头像" />
         <img v-else src="@/assets/default.png" alt="默认头像" />
       </div>
       <template #loading>
@@ -68,7 +68,7 @@
 
 <script setup lang="ts">
 import { computed, ref, onMounted, inject } from 'vue'
-import { useLoginStore } from '@/store'
+import { useUserStore } from '@/store'
 import ValidateForm from '@/components/ValidateForm.vue'
 import ValidateInput from '@/components/ValidateInput2.vue'
 import Uploader from '@/components/Uploader.vue'
@@ -77,34 +77,46 @@ import createMessage from '@/components/createMessage'
 import { beforeUploadCheck } from '@/utils/uploadCheck'
 import { IDataType } from '@/service/type'
 import { AvatarType } from '@/service/main/setting'
+import { getUserInfoById } from '@/service/main/setting'
 
 type reloadType = () => void
 
-const loginStore = useLoginStore()
-const userInfo = computed(() => loginStore.userInfo)
+const userStore = useUserStore()
+const userInfo = computed(() => userStore.userInfo)
 
-const onFormSubmit = (result: boolean) => {
-  if (result) {
-    console.log('更改个人资料', result)
-  }
-}
-
-const nameRules: RulesProp = [{ type: 'required', message: '昵称不能为空' }]
+const signVal = ref('')
+const avatarVal = ref('')
+const emailVal = ref('')
 const nameVal = ref('')
 
-// 个性签名
-const signVal = ref('')
-
-const emailVal = ref('')
 const emailRules: RulesProp = [
   { type: 'required', message: '电子邮箱地址不能为空' },
   { type: 'email', message: '请输入正确的电子邮箱格式' },
 ]
+const nameRules: RulesProp = [{ type: 'required', message: '昵称不能为空' }]
 
-const avatarUrl = ref('')
-onMounted(() => {
-  avatarUrl.value = userInfo.value.avatar_url as string
+// 根据id获取用户信息
+getUserInfoById(userInfo.value.id).then(res => {
+  const { avatarUrl, sign, email, name } = res.data
+  signVal.value = sign
+  emailVal.value = email
+  avatarVal.value = avatarUrl as string
+  nameVal.value = name
 })
+
+const onFormSubmit = (result: boolean) => {
+  if (result) {
+    userStore.updateUserAction({
+      id: userInfo.value.id,
+      name: nameVal.value,
+      sign: signVal.value,
+      email: emailVal.value,
+    })
+  }
+}
+
+// 个性签名
+
 const uploadCheck = (file: File) => {
   const result = beforeUploadCheck(file, {
     format: ['image/jpeg', 'image/png'],
@@ -126,8 +138,10 @@ const handleFileUploaded = (rawData: IDataType<AvatarType>) => {
   setTimeout(() => {
     reloadFn() // 刷新
   }, 500)
-  loginStore.updateUserAvatar(rawData.data.avatarUrl)
+  userStore.updateUserAvatar(rawData.data.avatarUrl)
 }
+
+// 加载用户信息
 </script>
 
 <style scoped lang="less">
