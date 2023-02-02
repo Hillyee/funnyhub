@@ -5,6 +5,7 @@
       <slot name="submit">
         <button type="submit" class="btn btn-primary">提交</button>
       </slot>
+      <slot name="close"></slot>
     </div>
   </form>
 </template>
@@ -41,4 +42,9 @@ defineExpose({
 })
 </script>
 
-<style scoped></style>
+<style lang="less" scoped>
+.submit-area {
+  display: flex;
+  justify-content: flex-end;
+}
+</style>

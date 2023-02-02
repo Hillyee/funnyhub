@@ -1,6 +1,6 @@
 import { createPinia } from 'pinia'
 import { useUserStore } from './user'
-import { useMomentStore } from './main/moment'
+import { useMomentStore } from './moment'
 import { useGlobalStore } from './global'
 
 const pinia = createPinia()

@@ -1,5 +1,9 @@
 import { defineStore } from 'pinia'
-import { userLoginRequest, userRegisterRequest } from '@/service/login/index'
+import {
+  userLoginRequest,
+  userRegisterRequest,
+  currentUserRequest,
+} from '@/service/login/index'
 import { IAccount } from '@/service/login/type'
 import LocalCache from '@/utils/cache'
 import router from '@/router'
@@ -7,23 +11,15 @@ import passwordCode from '@/utils/base64'
 import createMessage from '@/components/createMessage'
 import { UserInfoType } from '@/service/main/setting'
 import { updateUserInfo } from '@/service/main/setting'
-
-export interface IUserInfo {
-  isLogin: boolean
-  id: number
-  name: string
-  avatar_url?: string
-  email: string
-  token: string
-}
+import { UserProps } from '@/components/types'
 
 export const useUserStore = defineStore('user', {
   state: () => {
     return {
-      token: '',
+      token: LocalCache.getCache('token') || '',
       userInfo: {
         isLogin: false,
-      } as IUserInfo,
+      } as UserProps,
     }
   },
   actions: {
@@ -31,11 +27,9 @@ export const useUserStore = defineStore('user', {
       const result = await userLoginRequest(account)
 
       if (result.code === 200) {
-        const { token, id } = result.data
+        const { token } = result.data
         this.token = token
-        this.userInfo = { ...result.data, isLogin: true }
         LocalCache.setCache('token', token)
-        LocalCache.setCache('userInfo', JSON.stringify(this.userInfo))
         if (isRemember) {
           const pas = passwordCode.passwordEncode(account.password)
           LocalCache.setCache('password', pas)
@@ -44,11 +38,16 @@ export const useUserStore = defineStore('user', {
           LocalCache.removeCache('password')
           LocalCache.removeCache('email')
         }
+        await this.getCurrentUser()
         createMessage('登录成功 2秒后跳转首页', 'success')
         setTimeout(() => {
           router.push('/home')
         }, 2000)
       }
+    },
+    async getCurrentUser() {
+      const res = await currentUserRequest()
+      this.userInfo = { isLogin: true, ...res.data }
     },
     async userRegisterAction(account: IAccount) {
       const result = await userRegisterRequest(account)
@@ -63,11 +62,9 @@ export const useUserStore = defineStore('user', {
       const token = LocalCache.getCache('token')
       if (token) {
         this.token = token
-      }
-
-      const userInfo = LocalCache.getCache('userInfo')
-      if (userInfo) {
-        this.userInfo = JSON.parse(userInfo)
+        this.getCurrentUser()
+      } else {
+        router.push('/login')
       }
     },
     logout() {
@@ -77,7 +74,7 @@ export const useUserStore = defineStore('user', {
       LocalCache.removeCache('userInfo')
     },
     updateUserAvatar(url: string) {
-      this.userInfo.avatar_url = url
+      this.userInfo = { ...this.userInfo, ...{ avatar_url: url } }
       LocalCache.setCache('userInfo', JSON.stringify(this.userInfo))
     },
     async updateUserAction(data: UserInfoType) {

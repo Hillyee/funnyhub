@@ -30,7 +30,7 @@
     </div>
     <div class="navbar navbar-dark bg-dark shadow-sm">
       <div class="container">
-        <img :src="user.avatar_url" class="rounded-circle avatar" alt="头像" />
+        <img :src="user.avatarUrl" class="rounded-circle avatar" alt="头像" />
         <a href="#" class="navbar-brand d-flex align-items-center">
           <strong>Welcome back！{{ user.name }}🌞</strong>
         </a>

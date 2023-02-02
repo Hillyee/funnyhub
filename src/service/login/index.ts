@@ -2,6 +2,14 @@ import myRequest from '../index'
 import { IAccount, IRegisterResult } from './type'
 import { IDataType } from '@/service/type'
 
+export interface UserType {
+  id: number
+  name: string
+  avatarUrl?: string
+  email: string
+  sign?: string
+}
+
 export const userLoginRequest = (data: IAccount) => {
   return myRequest.post<IDataType>({
     url: '/login',
@@ -14,5 +22,12 @@ export const userRegisterRequest = (data: IAccount) => {
   return myRequest.post<IRegisterResult>({
     url: '/users',
     data,
+  })
+}
+
+// 获取当前用户信息
+export const currentUserRequest = () => {
+  return myRequest.get<IDataType<UserType>>({
+    url: '/users/message',
   })
 }

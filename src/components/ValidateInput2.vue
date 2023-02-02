@@ -12,6 +12,26 @@
       :class="{ 'is-invalid': inputRef.error }"
     ></textarea>
 
+    <div class="dropdown" v-else-if="tag == 'select'">
+      <select
+        class="btn btn-outline-secondary dropdown-toggle mx-2"
+        aria-expanded="false"
+        v-model="inputRef.val"
+      >
+        <option
+          v-for="(item, index) in selectList"
+          :key="index"
+          :value="item.name"
+          class="dropdown-item"
+        >
+          {{ item.name }}
+        </option>
+      </select>
+      <button type="button" class="btn btn-link" @click="getLabels">
+        获取更多标签
+      </button>
+    </div>
+
     <input
       v-else
       type="text"
@@ -28,10 +48,11 @@
 </template>
 
 <script lang="ts" setup>
-import { PropType, reactive, watch, onMounted, inject } from 'vue'
+import { PropType, reactive, watch, onMounted, inject, ref } from 'vue'
 import { RulesProp } from './types'
+import { labelType } from '@/service/main/label'
 
-export type TagType = 'input' | 'textarea'
+export type TagType = 'input' | 'textarea' | 'select'
 const props = defineProps({
   modelValue: String,
   rules: {
@@ -44,8 +65,11 @@ const props = defineProps({
     type: String as PropType<TagType>,
     default: 'input',
   },
+  selectList: {
+    type: Array as PropType<labelType>,
+  },
 })
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue', 'getLabelList'])
 
 const inputRef = reactive({
   val: props.modelValue || '',
@@ -58,6 +82,14 @@ watch(
   () => props.modelValue,
   () => {
     inputRef.val = props.modelValue as string
+  }
+)
+
+const selectData = ref<labelType>([])
+watch(
+  () => props.selectList,
+  () => {
+    selectData.value = props.selectList as any
   }
 )
 // 定义规则
@@ -97,6 +129,9 @@ onMounted(() => {
   emitter.emit('form-item-created', validateInput)
 })
 
+const getLabels = () => {
+  emit('getLabelList')
+}
 defineExpose({
   validateInput,
 })

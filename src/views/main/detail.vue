@@ -14,7 +14,6 @@ import { getMomentByIdRequest } from '@/service/main/moment'
 const route = useRoute()
 const momentData = ref({})
 getMomentByIdRequest(route.params.id as string).then(res => {
-  console.log(res.data)
   momentData.value = res.data
 })
 </script>

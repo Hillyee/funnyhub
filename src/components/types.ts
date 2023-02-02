@@ -1,8 +1,7 @@
-export interface UserProps {
+import { UserType } from '@/service/login/index'
+
+export interface UserProps extends UserType {
   isLogin: boolean
-  name?: string
-  id?: number
-  avatar_url?: string
 }
 
 export interface RuleProp {

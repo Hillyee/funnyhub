@@ -6,5 +6,6 @@ export default {
   path: '/register',
   name: 'register',
   component: register,
+  meta: { redirectAlreadyLogin: true },
   children: [],
 }

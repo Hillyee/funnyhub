@@ -3,7 +3,7 @@
     <main>
       <div class="py-5 text-center">
         <img
-          :src="userInfo.avatar_url"
+          :src="userInfo.avatarUrl"
           class="rounded-circle avatar"
           alt="头像"
         />
@@ -26,7 +26,7 @@
           <ul class="list-group mb-3">
             <li class="list-group-item d-flex justify-content-between lh-sm">
               <h6 class="my-1">文章列表</h6>
-              <span class="text-muted">3</span>
+              <span class="text-muted">{{ count }}</span>
             </li>
             <li class="list-group-item d-flex justify-content-between lh-sm">
               <h6 class="my-1">关注了</h6>
@@ -39,10 +39,11 @@
           </ul>
         </div>
         <!-- 左侧文章列表 -->
+
         <div class="col-md-8 col-lg-9">
           <h4 class="mb-3">文章列表</h4>
           <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-            <div class="col">
+            <div class="col" v-for="(item, index) in momentList" :key="item.id">
               <div class="card shadow-sm">
                 <svg
                   class="bd-placeholder-img card-img-top"
@@ -54,18 +55,15 @@
                   preserveAspectRatio="xMidYMid slice"
                   focusable="false"
                 >
-                  <title>Placeholder</title>
                   <rect width="100%" height="100%" fill="#55595c" />
-                  <text x="50%" y="50%" fill="#eceeef" dy=".3em">
-                    Thumbnail
+                  <text x="10%" y="50%" fill="#eceeef" dy=".3em">
+                    {{ item.title }}
                   </text>
                 </svg>
 
                 <div class="card-body">
                   <p class="card-text">
-                    This is a wider card with supporting text below as a natural
-                    lead-in to additional content. This content is a little bit
-                    longer.
+                    {{ item.description }}
                   </p>
                   <div
                     class="d-flex justify-content-between align-items-center"
@@ -74,6 +72,7 @@
                       <button
                         type="button"
                         class="btn btn-sm btn-outline-secondary"
+                        @click="goDetail(item.id)"
                       >
                         View
                       </button>
@@ -84,149 +83,9 @@
                         Edit
                       </button>
                     </div>
-                    <small class="text-muted">9 mins</small>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="col">
-              <div class="card shadow-sm">
-                <svg
-                  class="bd-placeholder-img card-img-top"
-                  width="100%"
-                  height="225"
-                  xmlns="http://www.w3.org/2000/svg"
-                  role="img"
-                  aria-label="Placeholder: Thumbnail"
-                  preserveAspectRatio="xMidYMid slice"
-                  focusable="false"
-                >
-                  <title>Placeholder</title>
-                  <rect width="100%" height="100%" fill="#55595c" />
-                  <text x="50%" y="50%" fill="#eceeef" dy=".3em">
-                    Thumbnail
-                  </text>
-                </svg>
-
-                <div class="card-body">
-                  <p class="card-text">
-                    This is a wider card with supporting text below as a natural
-                    lead-in to additional content. This content is a little bit
-                    longer.
-                  </p>
-                  <div
-                    class="d-flex justify-content-between align-items-center"
-                  >
-                    <div class="btn-group">
-                      <button
-                        type="button"
-                        class="btn btn-sm btn-outline-secondary"
-                      >
-                        View
-                      </button>
-                      <button
-                        type="button"
-                        class="btn btn-sm btn-outline-secondary"
-                      >
-                        Edit
-                      </button>
-                    </div>
-                    <small class="text-muted">9 mins</small>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="col">
-              <div class="card shadow-sm">
-                <svg
-                  class="bd-placeholder-img card-img-top"
-                  width="100%"
-                  height="225"
-                  xmlns="http://www.w3.org/2000/svg"
-                  role="img"
-                  aria-label="Placeholder: Thumbnail"
-                  preserveAspectRatio="xMidYMid slice"
-                  focusable="false"
-                >
-                  <title>Placeholder</title>
-                  <rect width="100%" height="100%" fill="#55595c" />
-                  <text x="50%" y="50%" fill="#eceeef" dy=".3em">
-                    Thumbnail
-                  </text>
-                </svg>
-
-                <div class="card-body">
-                  <p class="card-text">
-                    This is a wider card with supporting text below as a natural
-                    lead-in to additional content. This content is a little bit
-                    longer.
-                  </p>
-                  <div
-                    class="d-flex justify-content-between align-items-center"
-                  >
-                    <div class="btn-group">
-                      <button
-                        type="button"
-                        class="btn btn-sm btn-outline-secondary"
-                      >
-                        View
-                      </button>
-                      <button
-                        type="button"
-                        class="btn btn-sm btn-outline-secondary"
-                      >
-                        Edit
-                      </button>
-                    </div>
-                    <small class="text-muted">9 mins</small>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="col">
-              <div class="card shadow-sm">
-                <svg
-                  class="bd-placeholder-img card-img-top"
-                  width="100%"
-                  height="225"
-                  xmlns="http://www.w3.org/2000/svg"
-                  role="img"
-                  aria-label="Placeholder: Thumbnail"
-                  preserveAspectRatio="xMidYMid slice"
-                  focusable="false"
-                >
-                  <title>Placeholder</title>
-                  <rect width="100%" height="100%" fill="#55595c" />
-                  <text x="50%" y="50%" fill="#eceeef" dy=".3em">
-                    Thumbnail
-                  </text>
-                </svg>
-
-                <div class="card-body">
-                  <p class="card-text">
-                    This is a wider card with supporting text below as a natural
-                    lead-in to additional content. This content is a little bit
-                    longer.
-                  </p>
-                  <div
-                    class="d-flex justify-content-between align-items-center"
-                  >
-                    <div class="btn-group">
-                      <button
-                        type="button"
-                        class="btn btn-sm btn-outline-secondary"
-                      >
-                        View
-                      </button>
-                      <button
-                        type="button"
-                        class="btn btn-sm btn-outline-secondary"
-                      >
-                        Edit
-                      </button>
-                    </div>
-                    <small class="text-muted">9 mins</small>
+                    <small class="text-muted">{{
+                      formatUtcString(item.updateAt)
+                    }}</small>
                   </div>
                 </div>
               </div>
@@ -247,11 +106,26 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { useUserStore } from '@/store'
+import { computed, onMounted, ref, nextTick } from 'vue'
+import { useUserStore, useMomentStore } from '@/store'
+import { userMomentRequset, IUserMomentData } from '@/service/main/moment'
+import { formatUtcString } from '@/utils/date-format'
+import router from '@/router'
 const loginStore = useUserStore()
 const userInfo = computed(() => loginStore.userInfo)
-console.log(userInfo.value)
+
+let momentList = ref()
+let count = ref()
+userMomentRequset(userInfo.value.id).then(res => {
+  momentList.value = res.data
+  count.value = res.data?.length
+})
+
+const goDetail = (id: number) => {
+  router.push({
+    path: `/detail${id}`,
+  })
+}
 </script>
 
 <style scoped lang="less">

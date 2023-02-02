@@ -3,5 +3,6 @@ export default {
   path: '/editor',
   name: 'editor',
   component: editor,
+  meta: { requiredLogin: true },
   children: [],
 }
