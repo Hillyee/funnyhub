@@ -25,6 +25,7 @@ declare module '@vue/runtime-core' {
     InfiniteScroll: typeof import('element-plus/es')['ElInfiniteScroll']
     Loader: typeof import('./src/components/loader.vue')['default']
     Message: typeof import('./src/components/Message.vue')['default']
+    Modal: typeof import('./src/components/Modal.vue')['default']
     NavCard: typeof import('./src/components/nav-card.vue')['default']
     NavHeader: typeof import('./src/components/nav-header.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']

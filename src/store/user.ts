@@ -3,6 +3,7 @@ import {
   userLoginRequest,
   userRegisterRequest,
   currentUserRequest,
+  getUserRequest,
 } from '@/service/login/index'
 import { IAccount } from '@/service/login/type'
 import LocalCache from '@/utils/cache'
@@ -47,7 +48,11 @@ export const useUserStore = defineStore('user', {
     },
     async getCurrentUser() {
       const res = await currentUserRequest()
-      this.userInfo = { isLogin: true, ...res.data }
+      if (res.code == 200) {
+        this.userInfo = { isLogin: true, ...res.data }
+      } else {
+        return false
+      }
     },
     async userRegisterAction(account: IAccount) {
       const result = await userRegisterRequest(account)
@@ -63,19 +68,15 @@ export const useUserStore = defineStore('user', {
       if (token) {
         this.token = token
         this.getCurrentUser()
-      } else {
-        router.push('/login')
       }
     },
     logout() {
       this.userInfo.isLogin = false
       this.token = ''
       LocalCache.removeCache('token')
-      LocalCache.removeCache('userInfo')
     },
     updateUserAvatar(url: string) {
       this.userInfo = { ...this.userInfo, ...{ avatar_url: url } }
-      LocalCache.setCache('userInfo', JSON.stringify(this.userInfo))
     },
     async updateUserAction(data: UserInfoType) {
       const res = await updateUserInfo(data)
@@ -85,6 +86,10 @@ export const useUserStore = defineStore('user', {
       } else {
         createMessage('更新失败', 'error', 3000)
       }
+    },
+    async getUserAction(id: string) {
+      const res = await getUserRequest(id)
+      return res.data
     },
   },
 })

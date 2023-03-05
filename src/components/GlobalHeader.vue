@@ -10,10 +10,19 @@
           <div class="col-sm-4 offset-md-1 py-4">
             <ul class="list-unstyled fs-5">
               <li>
-                <button class="btn btn-link text-white fs-5">编写文章</button>
+                <router-link class="btn btn-link text-white fs-5" to="/home"
+                  >返回首页</router-link
+                >
               </li>
               <li>
-                <button class="btn btn-link text-white fs-5">个人主页</button>
+                <router-link class="btn btn-link text-white fs-5" to="/editor"
+                  >写文章</router-link
+                >
+              </li>
+              <li>
+                <router-link class="btn btn-link text-white fs-5" to="/user"
+                  >个人主页</router-link
+                >
               </li>
               <li>
                 <button
@@ -30,10 +39,19 @@
     </div>
     <div class="navbar navbar-dark bg-dark shadow-sm">
       <div class="container">
-        <img :src="user.avatarUrl" class="rounded-circle avatar" alt="头像" />
-        <a href="#" class="navbar-brand d-flex align-items-center">
+        <div>
+          <img :src="user.avatarUrl" class="rounded-circle avatar" alt="头像" />
+
+          <router-link class="btn text-white fs-5" to="/home"
+            ><img
+              src="@/assets/icon/home.svg"
+              style="width: 20px"
+            />首页</router-link
+          >
+        </div>
+        <span class="navbar-brand d-flex align-items-center">
           <strong>Welcome back！{{ user.name }}🌞</strong>
-        </a>
+        </span>
         <button
           class="navbar-toggler"
           type="button"
@@ -79,6 +97,7 @@
 import { PropType } from 'vue'
 import { UserProps } from './types'
 import { useUserStore, useGlobalStore } from '@/store'
+import router from '@/router'
 const props = defineProps({
   user: {
     type: Object as PropType<UserProps>,

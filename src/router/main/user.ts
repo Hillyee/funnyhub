@@ -1,7 +1,8 @@
 const user = () => import('@/views/main/User.vue')
 
 export default {
-  path: '/user',
+  path: '/user/:id?',
   name: 'user',
   component: user,
+  meta: { requiredLogin: true },
 }

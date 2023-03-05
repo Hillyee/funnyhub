@@ -8,6 +8,7 @@
             <p class="lead text-muted">
               In the busy days, don't forget to live well. Love yourself
             </p>
+
             <p>
               <router-link class="btn btn-primary my-2" to="/editor"
                 >写文章</router-link
@@ -17,16 +18,43 @@
                 >个人主页</router-link
               >
             </p>
+            <!-- 搜索框 -->
+            <div class="input-group input-group-lg">
+              <input
+                type="text"
+                class="form-control py-3"
+                placeholder="查询相关内容"
+                aria-describedby="basic-addon1"
+                v-model="searchObj.word"
+              />
+              <button
+                class="btn btn-outline-secondary"
+                type="button"
+                id="inputGroupFileAddon04"
+                @click="search(true)"
+              >
+                搜索
+              </button>
+            </div>
           </div>
         </div>
       </section>
 
       <div class="album py-5 bg-light">
-        <div class="container">
+        <div
+          v-if="momentList.length"
+          class="container"
+          v-infinite-scroll="loadMore"
+          infinite-scroll-immediate-check="false"
+          :infinite-scroll-disabled="busy"
+          :infinite-scroll-distance="20"
+        >
           <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-            <div class="col">
+            <div class="col" v-for="(item, index) in momentList" :key="index">
               <div class="card shadow-sm">
+                <img v-if="item.momentUrl" :src="item.momentUrl" alt="" />
                 <svg
+                  v-else
                   class="bd-placeholder-img card-img-top"
                   width="100%"
                   height="225"
@@ -36,66 +64,25 @@
                   preserveAspectRatio="xMidYMid slice"
                   focusable="false"
                 >
-                  <title>Placeholder</title>
                   <rect width="100%" height="100%" fill="#55595c" />
                   <text x="50%" y="50%" fill="#eceeef" dy=".3em">
-                    Thumbnail
+                    {{ item.description }}
                   </text>
                 </svg>
 
                 <div class="card-body">
-                  <p class="card-text">
-                    This is a wider card with supporting text below as a natural
-                    lead-in to additional content. This content is a little bit
-                    longer.
-                  </p>
-                  <div
-                    class="d-flex justify-content-between align-items-center"
-                  >
-                    <div class="btn-group">
-                      <button
-                        type="button"
-                        class="btn btn-sm btn-outline-secondary"
-                      >
-                        View
-                      </button>
-                      <button
-                        type="button"
-                        class="btn btn-sm btn-outline-secondary"
-                      >
-                        Edit
-                      </button>
-                    </div>
-                    <small class="text-muted">9 mins</small>
+                  <h4 class="card-text">
+                    {{ item.title }}
+                  </h4>
+                  <div class="d-flex justify-content-between">
+                    <span>{{ item.description }}</span>
+                    <span
+                      class="text-muted author-hover"
+                      @click="goUserPage(item)"
+                    >
+                      | {{ item.author?.name }}</span
+                    >
                   </div>
-                </div>
-              </div>
-            </div>
-            <div class="col">
-              <div class="card shadow-sm">
-                <svg
-                  class="bd-placeholder-img card-img-top"
-                  width="100%"
-                  height="225"
-                  xmlns="http://www.w3.org/2000/svg"
-                  role="img"
-                  aria-label="Placeholder: Thumbnail"
-                  preserveAspectRatio="xMidYMid slice"
-                  focusable="false"
-                >
-                  <title>Placeholder</title>
-                  <rect width="100%" height="100%" fill="#55595c" />
-                  <text x="50%" y="50%" fill="#eceeef" dy=".3em">
-                    Thumbnail
-                  </text>
-                </svg>
-
-                <div class="card-body">
-                  <p class="card-text">
-                    This is a wider card with supporting text below as a natural
-                    lead-in to additional content. This content is a little bit
-                    longer.
-                  </p>
                   <div
                     class="d-flex justify-content-between align-items-center"
                   >
@@ -103,117 +90,23 @@
                       <button
                         type="button"
                         class="btn btn-sm btn-outline-secondary"
+                        @click="goDetail(item.id)"
                       >
-                        View
-                      </button>
-                      <button
-                        type="button"
-                        class="btn btn-sm btn-outline-secondary"
-                      >
-                        Edit
+                        查看
                       </button>
                     </div>
-                    <small class="text-muted">9 mins</small>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="col">
-              <div class="card shadow-sm">
-                <svg
-                  class="bd-placeholder-img card-img-top"
-                  width="100%"
-                  height="225"
-                  xmlns="http://www.w3.org/2000/svg"
-                  role="img"
-                  aria-label="Placeholder: Thumbnail"
-                  preserveAspectRatio="xMidYMid slice"
-                  focusable="false"
-                >
-                  <title>Placeholder</title>
-                  <rect width="100%" height="100%" fill="#55595c" />
-                  <text x="50%" y="50%" fill="#eceeef" dy=".3em">
-                    Thumbnail
-                  </text>
-                </svg>
-
-                <div class="card-body">
-                  <p class="card-text">
-                    This is a wider card with supporting text below as a natural
-                    lead-in to additional content. This content is a little bit
-                    longer.
-                  </p>
-                  <div
-                    class="d-flex justify-content-between align-items-center"
-                  >
-                    <div class="btn-group">
-                      <button
-                        type="button"
-                        class="btn btn-sm btn-outline-secondary"
-                      >
-                        View
-                      </button>
-                      <button
-                        type="button"
-                        class="btn btn-sm btn-outline-secondary"
-                      >
-                        Edit
-                      </button>
-                    </div>
-                    <small class="text-muted">9 mins</small>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="col">
-              <div class="card shadow-sm">
-                <svg
-                  class="bd-placeholder-img card-img-top"
-                  width="100%"
-                  height="225"
-                  xmlns="http://www.w3.org/2000/svg"
-                  role="img"
-                  aria-label="Placeholder: Thumbnail"
-                  preserveAspectRatio="xMidYMid slice"
-                  focusable="false"
-                >
-                  <title>Placeholder</title>
-                  <rect width="100%" height="100%" fill="#55595c" />
-                  <text x="50%" y="50%" fill="#eceeef" dy=".3em">
-                    Thumbnail
-                  </text>
-                </svg>
-
-                <div class="card-body">
-                  <p class="card-text">
-                    This is a wider card with supporting text below as a natural
-                    lead-in to additional content. This content is a little bit
-                    longer.
-                  </p>
-                  <div
-                    class="d-flex justify-content-between align-items-center"
-                  >
-                    <div class="btn-group">
-                      <button
-                        type="button"
-                        class="btn btn-sm btn-outline-secondary"
-                      >
-                        View
-                      </button>
-                      <button
-                        type="button"
-                        class="btn btn-sm btn-outline-secondary"
-                      >
-                        Edit
-                      </button>
-                    </div>
-                    <small class="text-muted">9 mins</small>
+                    <small class="text-muted">{{
+                      formatUtcString(item.updateTime)
+                    }}</small>
                   </div>
                 </div>
               </div>
             </div>
           </div>
+        </div>
+
+        <div v-else class="d-flex justify-content-center">
+          <div class="fs-2">暂无查询结果😭😭</div>
         </div>
       </div>
     </main>
@@ -236,42 +129,126 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { reactive, ref } from 'vue'
-import { momentListRequest } from '@/service/main/moment'
+import { reactive, ref, onMounted } from 'vue'
+import { formatUtcString } from '@/utils/date-format'
+import { useMomentStore } from '@/store'
 import { useRouter } from 'vue-router'
-import navCard from '@/components/nav-card.vue'
+import { MomentType } from '@/service/main/moment'
 
+const momentStore = useMomentStore()
 const listQuery = reactive({
-  limit: 10,
+  limit: 9,
   offset: 0,
 })
+const searchObj = reactive({
+  limit: 9,
+  offset: 0,
+  word: '',
+})
+let momentList = ref<any>([])
+onMounted(() => {
+  getLists()
+})
 
-let momentList = ref()
+// busy代表是否禁用滚动事件
+let busy = ref(false)
+const loadMore = () => {
+  if (searchObj.word) {
+    searchObj.offset += 9
+    search(false)
+  } else {
+    listQuery.offset += 9
+    getLists()
+  }
+  busy.value = false
+}
+const getLists = async () => {
+  if (busy.value) {
+    // 数据加载完毕
+    busy.value = true
+  } else {
+    // 普通获取列表
+    const res = await momentStore.momentListAction(
+      listQuery.limit,
+      listQuery.offset
+    )
+    if (res?.length !== 0) {
+      if (momentList.value.length !== 0) {
+        momentList.value = momentList.value.concat(res)
+        busy.value = false
+      } else {
+        momentList.value = res
+        busy.value = false
+      }
+    } else {
+      momentList.value = momentList.value.concat(res)
+      busy.value = true
+    }
+  }
+}
 
-// momentListRequest(listQuery.limit, listQuery.offset).then(res => {
-//   momentList.value = res.data
-//   // console.log(momentList.value)
-// })
+const getSearchList = async () => {
+  const res = await momentStore.searchListAction(searchObj)
+  isSearching.value = false
+  if (res?.length !== 0) {
+    if (momentList.value.length !== 0) {
+      momentList.value = momentList.value.concat(res)
+      busy.value = false
+    } else {
+      momentList.value = res
+      busy.value = false
+    }
+  } else {
+    momentList.value = momentList.value.concat(res)
+    busy.value = true
+  }
+}
+const isSearching = ref(false)
+const search = async (isFirst: boolean) => {
+  if (!searchObj.word) {
+    const res = await momentStore.momentListAction(
+      listQuery.limit,
+      listQuery.offset
+    )
+    momentList.value = res
+  }
+  if (isFirst && searchObj.word) {
+    momentList.value = []
+    searchObj.offset = 0
+    busy.value = false
+    if (!isSearching.value) {
+      isSearching.value = true
+      getSearchList()
+    }
+  } else {
+    if (busy.value && searchObj.word) {
+      // 数据加载完毕
+      busy.value = true
+    } else if (!isSearching.value) {
+      isSearching.value = true
+      getSearchList()
+    }
+  }
+}
+const goDetail = (id: number) => {
+  window.open(`/detail/${id}`)
+}
 
 const router = useRouter()
-
-// 无限滚动
-const load = () => {
-  // listQuery.offset += 10
-  // momentListRequest(listQuery.limit, listQuery.offset).then(res => {
-  //   res.data?.forEach(item => {
-  //     momentList.value.push(item)
-  //   })
-  //   console.log(momentList.value)
-  // })
+const goUserPage = (item: MomentType) => {
+  router.push({
+    name: 'user',
+    params: {
+      id: item.author.id,
+      author: item.author.name,
+      avatar: item.author.avatarURL,
+    },
+  })
 }
 </script>
 
 <style scoped lang="less">
-.home {
-  .list {
-    width: 70%;
-    margin: 0 auto;
-  }
+.author-hover {
+  cursor: pointer;
 }
 </style>

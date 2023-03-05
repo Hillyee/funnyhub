@@ -6,7 +6,7 @@ export interface UserType {
   id: number
   name: string
   avatarUrl?: string
-  email: string
+  email?: string
   sign?: string
 }
 
@@ -29,5 +29,12 @@ export const userRegisterRequest = (data: IAccount) => {
 export const currentUserRequest = () => {
   return myRequest.get<IDataType<UserType>>({
     url: '/users/message',
+  })
+}
+
+// 根据id获取用户信息
+export const getUserRequest = (id: string) => {
+  return myRequest.get<IDataType<UserType>>({
+    url: `/users/${id}/message`,
   })
 }

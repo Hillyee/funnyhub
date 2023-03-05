@@ -43,7 +43,6 @@ const props = defineProps({
   },
   uploaded: {
     type: Object,
-    default: {},
   },
   uploadType: {
     type: String,
@@ -53,23 +52,22 @@ const props = defineProps({
 })
 const emit = defineEmits(['file-uploaded', 'file-uploaded-error'])
 const fileInputRef = ref<null | HTMLInputElement>(null)
-const fileStatus = ref<UploadStatus>('ready')
+const fileStatus = ref<UploadStatus>(props.uploaded ? 'success' : 'ready')
 const triggerUpload = () => {
   if (fileInputRef.value) {
     fileInputRef.value.click()
   }
 }
-// const uploadedData = ref(props.uploaded)
-// watch(
-//   () => props.uploaded,
-//   newValue => {
-//     if (newValue) {
-//       fileStatus.value = 'success'
-//       uploadedData.value = newValue
-//     }
-//   }
-// )
-const uploadedData = ref()
+const uploadedData = ref(props.uploaded)
+watch(
+  () => props.uploaded,
+  newValue => {
+    if (newValue) {
+      fileStatus.value = 'success'
+      uploadedData.value = newValue
+    }
+  }
+)
 
 const handleFileChange = (e: Event) => {
   const currentTarget = e.target as HTMLInputElement

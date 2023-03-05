@@ -65,6 +65,7 @@
               <uploader
                 action="/picture"
                 :beforeUpload="uploadCheck"
+                :uploaded="uploadedData"
                 @file-uploaded="handleFileUploaded"
                 uploadType="picture"
                 class="d-flex align-items-center justify-content-center bg-light text-secondary w-100 my-4"
@@ -81,10 +82,19 @@
                     </div>
                   </div>
                 </template>
+
                 <template #uploaded="dataProps">
-                  <img :src="dataProps.uploadedData.url" alt="" width="500" />
+                  <div class="uploaded-area">
+                    <img
+                      :src="dataProps.uploadedData?.url"
+                      alt=""
+                      width="500"
+                    />
+                    <h3>点击重新上传</h3>
+                  </div>
                 </template>
               </uploader>
+
               <template #submit>
                 <button
                   type="button"
@@ -113,7 +123,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useMomentStore } from '@/store'
 import LocalCache from '@/utils/cache'
@@ -123,7 +133,10 @@ import ValidateInput from '@/components/ValidateInput2.vue'
 import Uploader from '@/components/Uploader.vue'
 import { beforeUploadCheck } from '@/utils/uploadCheck'
 import { reqLabelList } from '@/service/main/label'
-import { IPictureType } from '@/service/main/moment'
+import { IPictureType, getMomentByIdRequest } from '@/service/main/moment'
+import { useRoute } from 'vue-router'
+
+const route = useRoute()
 const content = ref('')
 const title = ref('')
 const labelVal = ref('')
@@ -178,30 +191,66 @@ const momentStore = useMomentStore()
 
 const closeBtnRef = ref<null | HTMLInputElement>(null)
 
+const uploadedData = ref()
+
+onMounted(() => {
+  if (route.params.id) {
+    const currentId = route.params.id
+    getMomentByIdRequest(currentId as string).then(res => {
+      const momentDetail = res.data
+      content.value = momentDetail.content
+      title.value = momentDetail.title
+      labelVal.value = momentDetail.labels ? momentDetail.labels[0].name : ''
+      descriptionVal.value = momentDetail.description
+      if (momentDetail.momentUrl) {
+        uploadedData.value = { url: momentDetail.momentUrl }
+      }
+    })
+  }
+})
 const handlePublicClick = async () => {
   const token = LocalCache.getCache('token')
+  const publicType = route.params.publicType || 'add'
+  console.log(publicType)
+
   if (!token) {
     router.push('/login')
   } else if (!content.value || !title.value) {
     createMessage('内容或标题不能为空', 'default')
   } else {
     let momentId: number
-    const res = await momentStore.momentPublicAction(
-      title.value,
-      content.value,
-      descriptionVal.value,
-      momentUrl.value
-    )
-
-    if (res?.code == 200) {
-      momentId = res.data.id
-      // 调用保存动态与标签联系的接口
-      await momentStore.setLabel(momentId, [labelVal.value])
+    if (publicType == 'add') {
+      const res = await momentStore.momentPublicAction(
+        title.value,
+        content.value,
+        descriptionVal.value,
+        momentUrl.value
+      )
+      if (res?.code == 200) {
+        momentId = res.data.id
+        // 调用保存动态与标签联系的接口
+        await momentStore.setLabel(momentId, [labelVal.value])
+        createMessage('发布成功', 'success')
+        router.push(`/detail/${momentId}`)
+      }
+    } else if (publicType == 'edit') {
+      const currentId = route.params.id
+      const res = await momentStore.momentUpdateAction(
+        currentId,
+        title.value,
+        content.value,
+        descriptionVal.value,
+        momentUrl.value
+      )
+      if (res?.code == 200) {
+        momentId = res.data.id
+        // 调用保存动态与标签联系的接口
+        await momentStore.setLabel(momentId, [labelVal.value])
+        createMessage('修改成功', 'success')
+        router.push(`/detail/${momentId}`)
+      }
     }
-
     closeBtnRef.value?.click()
-    createMessage('发布成功', 'success')
-    router.push('/user')
   }
 }
 </script>
@@ -233,9 +282,21 @@ const handlePublicClick = async () => {
     font-size: 30px;
   }
 }
-
-.pic-class {
-  width: 100px;
-  height: 100px;
+.uploaded-area {
+  position: relative;
+}
+.uploaded-area:hover {
+  opacity: 0.8;
+}
+.uploaded-area:hover h3 {
+  display: block;
+}
+.uploaded-area h3 {
+  display: none;
+  position: absolute;
+  color: #000;
+  text-align: center;
+  width: 100%;
+  top: 50%;
 }
 </style>

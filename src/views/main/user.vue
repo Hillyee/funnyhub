@@ -1,15 +1,19 @@
 <template>
   <div class="container">
     <main>
-      <div class="py-5 text-center">
+      <div class="py-5 text-center" v-if="user">
         <img
-          :src="userInfo.avatarUrl"
+          :src="currentUser.avatarUrl"
           class="rounded-circle avatar"
           alt="头像"
         />
-        <h2>{{ userInfo.name }}</h2>
-        <p class="lead">好好学习天天向上（个性签名）</p>
-        <router-link to="/user/setting" type="button" class="btn btn-light"
+        <h2>{{ user.name }}</h2>
+        <p class="lead">{{ user.sign }}</p>
+        <router-link
+          v-if="user.id == currentUser.id"
+          to="/user/setting"
+          type="button"
+          class="btn btn-light"
           >编辑个人资料</router-link
         >
       </div>
@@ -45,7 +49,9 @@
           <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
             <div class="col" v-for="(item, index) in momentList" :key="item.id">
               <div class="card shadow-sm">
+                <img v-if="item.moment_url" :src="item.moment_url" alt="" />
                 <svg
+                  v-else
                   class="bd-placeholder-img card-img-top"
                   width="100%"
                   height="225"
@@ -62,9 +68,12 @@
                 </svg>
 
                 <div class="card-body">
-                  <p class="card-text">
-                    {{ item.description }}
-                  </p>
+                  <h4 class="card-text">
+                    {{ item.title }}
+                  </h4>
+                  <div class="d-flex justify-content-between">
+                    <span>{{ item.description }}</span>
+                  </div>
                   <div
                     class="d-flex justify-content-between align-items-center"
                   >
@@ -74,13 +83,7 @@
                         class="btn btn-sm btn-outline-secondary"
                         @click="goDetail(item.id)"
                       >
-                        View
-                      </button>
-                      <button
-                        type="button"
-                        class="btn btn-sm btn-outline-secondary"
-                      >
-                        Edit
+                        查看
                       </button>
                     </div>
                     <small class="text-muted">{{
@@ -106,25 +109,30 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, nextTick } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import { useUserStore, useMomentStore } from '@/store'
-import { userMomentRequset, IUserMomentData } from '@/service/main/moment'
+import { userMomentRequset } from '@/service/main/moment'
 import { formatUtcString } from '@/utils/date-format'
-import router from '@/router'
-const loginStore = useUserStore()
-const userInfo = computed(() => loginStore.userInfo)
+import { useRoute } from 'vue-router'
+const userStore = useUserStore()
+const currentUser = computed(() => userStore.userInfo)
 
 let momentList = ref()
 let count = ref()
-userMomentRequset(userInfo.value.id).then(res => {
-  momentList.value = res.data
-  count.value = res.data?.length
+let user = ref()
+const route = useRoute()
+const currentId = (route.params.id as string) || currentUser.value.id + ''
+onMounted(async () => {
+  userMomentRequset(currentId).then(res => {
+    momentList.value = res.data
+    count.value = res.data?.length
+  })
+
+  user.value = await userStore.getUserAction(currentId)
 })
 
 const goDetail = (id: number) => {
-  router.push({
-    path: `/detail${id}`,
-  })
+  window.open(`/detail/${id}`)
 }
 </script>
 

@@ -5,8 +5,7 @@ import detail from '@/router/main/detail'
 import editor from '@/router/main/editor'
 import user from '@/router/main/user'
 import setting from '@/router/main/setting'
-import { useGlobalStore } from '@/store'
-import LocalCache from '@/utils/cache'
+import { useGlobalStore, useUserStore } from '@/store'
 import createMessage from '@/components/createMessage'
 
 const routes: RouteRecordRaw[] = [
@@ -40,18 +39,26 @@ const router = createRouter({
 router.beforeEach((to, from) => {
   const globalStore = useGlobalStore()
   globalStore.setLoading()
-  const token = LocalCache.getCache('token')
-  if (
-    to.path == '/editor' ||
-    to.path == '/user/setting' ||
-    to.path == '/user'
-  ) {
-    if (!token) {
-      createMessage('请先登录!', 'default')
-      setTimeout(() => {
+  const userStore = useUserStore()
+  const { userInfo, token } = userStore
+
+  const { requiredLogin } = to.meta
+  if (!userInfo.isLogin) {
+    if (token) {
+      // 发送登录请求
+      userStore.loadLoaclLogin()
+    } else {
+      // 没有token
+      // requiredLogin参数代表是否需要登录才能访问
+      if (requiredLogin) {
+        createMessage('请先登录', 'default')
         return { name: 'login' }
-      }, 300)
+      } else {
+        return true
+      }
     }
+  } else {
+    return true
   }
 })
 

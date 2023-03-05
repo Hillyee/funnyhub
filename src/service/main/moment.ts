@@ -1,16 +1,15 @@
 import myRequest from '@/service/index'
 import { IDataType } from '../type'
 
-export interface momentListResult {
-  code: number
-  data?: DataEntity[] | null
-}
-export interface DataEntity {
+// 动态类型
+export interface MomentType {
   id: number
-  title: string | null
+  title: string
   content: string
+  description?: string | null
   createTime: string
   updateTime: string
+  momentUrl?: string | null
   author: Author
   labels?: LabelsEntity[] | null
   images?: string[] | null
@@ -18,13 +17,14 @@ export interface DataEntity {
 export interface Author {
   id: number
   name: string
-  avatarURL?: string | null
+  avatarURL?: string
 }
 export interface LabelsEntity {
   id: number
   name: string
 }
 
+// 动态封面
 export interface IPictureType {
   url: string
 }
@@ -33,23 +33,12 @@ export interface uploadPicResult {
   message: string
   data: IPictureType
 }
-export interface momentType {
-  id: number
-}
 
-export interface userMomentType {
-  id: number
-  content: string
-  user_id: number
-  createAt: string
-  updateAt: string
-  title: string
-  description: string
-  moment_url: string
-}
-export interface IUserMomentData {
-  code: number
-  data?: userMomentType[] | null
+// 搜索类型
+export interface queryObject {
+  limit: number
+  offset: number
+  word: string
 }
 
 // 发布动态封面
@@ -70,7 +59,7 @@ export const momentPublicRequest = (
   description: string,
   momentUrl: string
 ) => {
-  return myRequest.post<IDataType<momentType>>({
+  return myRequest.post<IDataType<MomentType>>({
     url: '/moment',
     data: {
       title,
@@ -82,14 +71,15 @@ export const momentPublicRequest = (
 }
 
 // 获取某用户动态
-export const userMomentRequset = (userId: number) => {
-  return myRequest.get<IUserMomentData>({
+export const userMomentRequset = (userId: string) => {
+  return myRequest.get<IDataType<MomentType[]>>({
     url: `/moment/${userId}/list`,
   })
 }
 
-export const momentListRequest = (limit: number, offset: number) => {
-  return myRequest.get<momentListResult>({
+// 获取所有动态
+export const getMomentListRequest = (limit: number, offset: number) => {
+  return myRequest.get<IDataType<MomentType[]>>({
     url: `/moment`,
     params: {
       limit,
@@ -98,31 +88,48 @@ export const momentListRequest = (limit: number, offset: number) => {
   })
 }
 
-// 获取某条动态
-
-export interface Data {
-  id: number
-  content: string
-  title: string
-  description: string
-  createTime: string
-  updateTime: string
-  author: Author
-  labels?: LabelsEntity[] | null
-  images?: null
-}
-export interface Author {
-  id: number
-  name: string
-  avatarURL?: string | null | undefined
-}
-export interface LabelsEntity {
-  id: number
-  name: string
+// 搜索动态
+export const searchMomentListReq = (query: queryObject) => {
+  const { limit, offset, word } = query
+  return myRequest.post<IDataType<MomentType[]>>({
+    url: `/moment/fuzzy`,
+    params: {
+      limit,
+      offset,
+      word,
+    },
+  })
 }
 
+// 获取某条动态详情
 export const getMomentByIdRequest = (id: string) => {
-  return myRequest.get<IDataType>({
+  return myRequest.get<IDataType<MomentType>>({
+    url: `/moment/${id}`,
+  })
+}
+
+// 修改某条动态
+export const updateMomentRequest = (
+  id: string | string[],
+  title: string,
+  content: any,
+  description: string,
+  momentUrl: string
+) => {
+  return myRequest.patch<IDataType>({
+    url: `/moment/${id}`,
+    data: {
+      title,
+      content,
+      description,
+      momentUrl,
+    },
+  })
+}
+
+// 删除动态
+export const deleteMomentRequest = (id: number | string | string[]) => {
+  return myRequest.delete<IDataType>({
     url: `/moment/${id}`,
   })
 }
