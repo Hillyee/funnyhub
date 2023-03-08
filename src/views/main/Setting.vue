@@ -4,6 +4,7 @@
       action="/upload"
       :beforeUpload="uploadCheck"
       @file-uploaded="handleFileUploaded"
+      uploadType="picture"
       class="d-flex align-items-center justify-content-center"
     >
       <div class="avatar-container">

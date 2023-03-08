@@ -9,7 +9,7 @@ export interface MomentType {
   description?: string | null
   createTime: string
   updateTime: string
-  momentUrl?: string | null
+  momentUrl?: string
   author: Author
   labels?: LabelsEntity[] | null
   images?: string[] | null

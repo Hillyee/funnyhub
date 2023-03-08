@@ -28,6 +28,118 @@
         ></v-md-preview>
         <div class="d-grid gap-2 d-sm-flex justify-content-sm-center"></div>
       </div>
+
+      <!-- 评论 -->
+
+      <div class="col-lg-8 mx-auto">
+        <div class="my-3 p-3 bg-body rounded shadow-sm">
+          <h3 class="border-bottom pb-2 mb-0">
+            评论大区
+            <button
+              type="button"
+              class="btn btn-outline-dark btn-sm"
+              @click.prevent="commentModal = true"
+            >
+              发表评论
+            </button>
+          </h3>
+          <div
+            class="d-flex text-muted pt-3"
+            v-if="comments?.length"
+            v-infinite-scroll="loadMore"
+            infinite-scroll-immediate-check="false"
+            :infinite-scroll-disabled="busy"
+            :infinite-scroll-distance="10"
+            v-for="(item, index) in comments"
+            :key="index"
+          >
+            <img
+              :src="item.reviewer.avatarUrl"
+              alt=""
+              class="bd-placeholder-img flex-shrink-0 me-2 rounded"
+              width="32"
+              height="32"
+            />
+
+            <div class="pb-3 mb-0 small lh-sm border-bottom w-100">
+              <div class="d-flex justify-content-between">
+                <strong class="text-gray-dark"
+                  >@ {{ item.reviewer.name }}</strong
+                >
+                <button
+                  type="button"
+                  class="btn btn-secondary btn-sm"
+                  @click="onReply(item.id, item.userId)"
+                >
+                  回复
+                </button>
+              </div>
+              <div class="d-flex justify-content-between">
+                <span class="d-block d-flex">{{ item.content }}</span>
+                <button
+                  type="button"
+                  class="btn btn-link btn-sm"
+                  @click="getReply(item.id)"
+                  style="color: gray"
+                >
+                  更多回复
+                </button>
+                <span>{{ formatUtcString(item.updateAt) }}</span>
+              </div>
+
+              <!-- 回复 -->
+
+              <div
+                class="my-3 p-3 bg-body rounded shadow-sm"
+                v-if="item.reply?.length !== 0"
+              >
+                <div
+                  class="d-flex text-muted pt-3"
+                  v-for="(reply, index) in item.reply"
+                  :key="index"
+                >
+                  <img
+                    :src="reply.reviewer.avatarUrl"
+                    alt=""
+                    class="bd-placeholder-img flex-shrink-0 me-2 rounded"
+                    width="32"
+                    height="32"
+                  />
+
+                  <div class="pb-3 mb-0 small lh-sm border-bottom w-100">
+                    <div class="d-flex justify-content-between">
+                      <div class="d-flex">
+                        <strong class="text-gray-dark"
+                          >@ {{ reply.reviewer.name }} </strong
+                        >&nbsp;&nbsp; 回复&nbsp;&nbsp;
+                        <strong class="text-gray-dark"
+                          >@ {{ reply.replyUser.name }}</strong
+                        >
+                      </div>
+                      <button
+                        type="button"
+                        class="btn btn-secondary btn-sm"
+                        @click="onReply(item.id, reply.userId)"
+                      >
+                        回复
+                      </button>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                      <span class="d-block d-flex fs-6">
+                        {{ reply.content }}
+                      </span>
+                      <span>{{ formatUtcString(reply.updateAt) }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div v-else class="my-3 p-3 bg-body rounded shadow-sm fs-5">
+                暂无更多回复~~
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Modal -->
@@ -39,27 +151,42 @@
     >
       <p>确定要删除这篇文章吗？</p>
     </modal>
+    <modal
+      title="发表评论"
+      :visible="commentModal"
+      @model-on-close="commentModal = false"
+      @model-on-confirm="onConfirmComment"
+    >
+      <textarea
+        class="form-control"
+        v-model="commentText"
+        aria-label="评论"
+        aria-describedby="basic-addon1"
+      ></textarea>
+    </modal>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref, onMounted, inject } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import {
   getMomentByIdRequest,
   deleteMomentRequest,
 } from '@/service/main/moment'
-import { IMoment } from '@/service/main/moment'
+import { MomentType } from '@/service/main/moment'
+import { CommentType, addReplyType } from '@/service/main/comment'
 import { IDataType } from '@/service/type'
 import createMessage from '@/components/createMessage'
 import Modal from '@/components/Modal.vue'
-import { useUserStore } from '@/store'
-
+import { useUserStore, useCommentStore } from '@/store'
+import { formatUtcString } from '@/utils/date-format'
+type reloadType = () => void
 const route = useRoute()
 const router = useRouter()
-let momentDetail = ref<IMoment>()
+let momentDetail = ref<MomentType>()
 getMomentByIdRequest(route.params.id as string).then(
-  (res: IDataType<IMoment>) => {
+  (res: IDataType<MomentType>) => {
     momentDetail.value = res.data
   }
 )
@@ -87,6 +214,100 @@ const onConfirm = async () => {
 
 const userStore = useUserStore()
 const userId = userStore.userInfo.id
-</script>
 
+// 获取评论
+const limit = ref(10)
+const offset = ref(0)
+const commentStore = useCommentStore()
+const comments = ref<any>([])
+const currentMomentId = ref()
+onMounted(async () => {
+  currentMomentId.value = route.params.id
+  getLists()
+})
+
+// busy代表是否禁用滚动事件
+let busy = ref(false)
+const loadMore = () => {
+  offset.value = offset.value + 10
+  getLists()
+  busy.value = false
+}
+const getLists = async () => {
+  if (busy.value) {
+    // 数据加载完毕
+    busy.value = true
+  } else {
+    const res = await commentStore.getCommentsAction(
+      currentMomentId.value,
+      limit.value,
+      offset.value
+    )
+    if (res?.length !== 0) {
+      if (comments.value?.length !== 0) {
+        comments.value = comments.value?.concat(res)
+        busy.value = false
+      } else {
+        comments.value = res
+        busy.value = false
+      }
+    } else {
+      comments.value = comments.value?.concat(res)
+      busy.value = true
+    }
+  }
+}
+
+const commentModal = ref(false)
+const commentText = ref('')
+const reloadFn: reloadType = inject('reload') as reloadType
+const onConfirmComment = async () => {
+  if (commentText.value !== '') {
+    if (replyCommentId.value) {
+      console.log(replyBeUserId.value)
+
+      // 二级评论
+      const query: addReplyType = {
+        momentId: currentMomentId.value,
+        commentId: replyCommentId.value,
+        content: commentText.value,
+        beUserId: replyBeUserId.value,
+      }
+      const res = await commentStore.addReplyAction(query)
+    } else {
+      // 一级评论
+      const res = commentStore.addCommentAction(
+        currentMomentId.value,
+        commentText.value
+      )
+    }
+
+    commentModal.value = false
+    createMessage('发表成功', 'success')
+    setTimeout(() => {
+      reloadFn() // 刷新
+    }, 1000)
+  } else {
+    createMessage('评论不能为空', 'error')
+  }
+}
+const getReply = async (commentId: string) => {
+  const res = await commentStore.getReplyAction(
+    currentMomentId.value,
+    commentId
+  )
+  const index = comments.value.findIndex((i: CommentType) => i.id == commentId)
+  setTimeout(() => {
+    Reflect.set(comments.value[index], 'reply', res)
+  }, 500)
+}
+
+const replyCommentId = ref('')
+const replyBeUserId = ref('')
+const onReply = (commentId: string, beUserId: string) => {
+  commentModal.value = true
+  replyCommentId.value = commentId
+  replyBeUserId.value = beUserId
+}
+</script>
 <style scoped lang="less"></style>

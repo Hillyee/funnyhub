@@ -201,7 +201,7 @@ onMounted(() => {
       content.value = momentDetail.content
       title.value = momentDetail.title
       labelVal.value = momentDetail.labels ? momentDetail.labels[0].name : ''
-      descriptionVal.value = momentDetail.description
+      descriptionVal.value = momentDetail.description || ''
       if (momentDetail.momentUrl) {
         uploadedData.value = { url: momentDetail.momentUrl }
       }
