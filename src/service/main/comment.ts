@@ -81,3 +81,8 @@ export const addReplyReq = (query: addReplyType) => {
     },
   })
 }
+export const deleteCommentReq = (id: string) => {
+  return myRequest.delete<IDataType>({
+    url: `/comment/${id}`,
+  })
+}

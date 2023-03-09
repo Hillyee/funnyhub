@@ -71,7 +71,7 @@ export const momentPublicRequest = (
 }
 
 // 获取某用户动态
-export const userMomentRequset = (userId: string) => {
+export const userMomentRequset = (userId: string | string[]) => {
   return myRequest.get<IDataType<MomentType[]>>({
     url: `/moment/${userId}/list`,
   })

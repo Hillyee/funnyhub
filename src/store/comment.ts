@@ -5,6 +5,7 @@ import {
   getReplyReq,
   addReplyReq,
   addReplyType,
+  deleteCommentReq,
 } from '@/service/main/comment'
 export const useCommentStore = defineStore('comment', {
   state: () => {
@@ -40,6 +41,12 @@ export const useCommentStore = defineStore('comment', {
     },
     async addReplyAction(query: addReplyType) {
       const res = await addReplyReq(query)
+      if (res.code == 200) {
+        return res.data
+      }
+    },
+    async deleteCommentAction(id: string) {
+      const res = await deleteCommentReq(id)
       if (res.code == 200) {
         return res.data
       }

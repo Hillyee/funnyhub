@@ -4,7 +4,7 @@
     <global-header v-if="isRouterActive" :user="userInfo"></global-header>
     <!-- loading -->
     <loader v-if="isLoading"></loader>
-    <router-view v-if="isRouterActive"></router-view>
+    <router-view v-if="isRouterActive" :key="$route.fullPath"></router-view>
   </div>
 </template>
 

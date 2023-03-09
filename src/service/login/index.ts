@@ -3,7 +3,7 @@ import { IAccount, IRegisterResult } from './type'
 import { IDataType } from '@/service/type'
 
 export interface UserType {
-  id: number
+  id: string
   name: string
   avatarUrl?: string
   email?: string
@@ -33,7 +33,7 @@ export const currentUserRequest = () => {
 }
 
 // 根据id获取用户信息
-export const getUserRequest = (id: string) => {
+export const getUserRequest = (id: string | string[]) => {
   return myRequest.get<IDataType<UserType>>({
     url: `/users/${id}/message`,
   })

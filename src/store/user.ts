@@ -87,7 +87,7 @@ export const useUserStore = defineStore('user', {
         createMessage('更新失败', 'error', 3000)
       }
     },
-    async getUserAction(id: string) {
+    async getUserAction(id: string | string[]) {
       const res = await getUserRequest(id)
       return res.data
     },

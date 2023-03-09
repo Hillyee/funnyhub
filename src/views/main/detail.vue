@@ -5,7 +5,7 @@
       <h1 class="display-5 fw-bold">{{ momentDetail?.title }}</h1>
       <p>{{ momentDetail?.description }}</p>
       <button
-        v-if="momentDetail?.author.id == userId"
+        v-if="momentDetail?.author.id + '' == userId"
         type="button"
         class="btn btn-sm btn-outline-secondary mx-1"
         publicType="edit"
@@ -14,7 +14,7 @@
         编辑
       </button>
       <button
-        v-if="momentDetail?.author.id == userId"
+        v-if="momentDetail?.author.id + '' == userId"
         type="button"
         class="btn btn-sm btn-outline-danger"
         @click.prevent="modalIsVisible = true"
@@ -66,13 +66,23 @@
                 <strong class="text-gray-dark"
                   >@ {{ item.reviewer.name }}</strong
                 >
-                <button
-                  type="button"
-                  class="btn btn-secondary btn-sm"
-                  @click="onReply(item.id, item.userId)"
-                >
-                  回复
-                </button>
+                <div class="d-flex">
+                  <button
+                    type="button"
+                    class="btn btn-secondary btn-sm"
+                    @click="onReply(item.id, item.userId)"
+                  >
+                    回复
+                  </button>
+                  <button
+                    v-if="userId == item.userId"
+                    type="button"
+                    class="btn btn-outline-danger btn-sm"
+                    @click="deleteComment(item.id, '')"
+                  >
+                    删除
+                  </button>
+                </div>
               </div>
               <div class="d-flex justify-content-between">
                 <span class="d-block d-flex">{{ item.content }}</span>
@@ -116,13 +126,23 @@
                           >@ {{ reply.replyUser.name }}</strong
                         >
                       </div>
-                      <button
-                        type="button"
-                        class="btn btn-secondary btn-sm"
-                        @click="onReply(item.id, reply.userId)"
-                      >
-                        回复
-                      </button>
+                      <div class="d-flex">
+                        <button
+                          type="button"
+                          class="btn btn-secondary btn-sm mx-1"
+                          @click="onReply(item.id, reply.userId)"
+                        >
+                          回复
+                        </button>
+                        <button
+                          v-if="userId == reply.userId"
+                          type="button"
+                          class="btn btn-outline-danger btn-sm"
+                          @click="deleteComment(reply.id, item.id)"
+                        >
+                          删除
+                        </button>
+                      </div>
                     </div>
                     <div class="d-flex justify-content-between">
                       <span class="d-block d-flex fs-6">
@@ -223,17 +243,17 @@ const comments = ref<any>([])
 const currentMomentId = ref()
 onMounted(async () => {
   currentMomentId.value = route.params.id
-  getLists()
+  getCommentList()
 })
 
 // busy代表是否禁用滚动事件
 let busy = ref(false)
 const loadMore = () => {
   offset.value = offset.value + 10
-  getLists()
+  getCommentList()
   busy.value = false
 }
-const getLists = async () => {
+const getCommentList = async () => {
   if (busy.value) {
     // 数据加载完毕
     busy.value = true
@@ -243,11 +263,19 @@ const getLists = async () => {
       limit.value,
       offset.value
     )
+    console.log(res)
+
     if (res?.length !== 0) {
       if (comments.value?.length !== 0) {
+        console.log(comments.value)
+
+        console.log('111')
+
         comments.value = comments.value?.concat(res)
         busy.value = false
       } else {
+        console.log('222')
+        console.log(comments.value)
         comments.value = res
         busy.value = false
       }
@@ -264,8 +292,6 @@ const reloadFn: reloadType = inject('reload') as reloadType
 const onConfirmComment = async () => {
   if (commentText.value !== '') {
     if (replyCommentId.value) {
-      console.log(replyBeUserId.value)
-
       // 二级评论
       const query: addReplyType = {
         momentId: currentMomentId.value,
@@ -281,7 +307,6 @@ const onConfirmComment = async () => {
         commentText.value
       )
     }
-
     commentModal.value = false
     createMessage('发表成功', 'success')
     setTimeout(() => {
@@ -308,6 +333,18 @@ const onReply = (commentId: string, beUserId: string) => {
   commentModal.value = true
   replyCommentId.value = commentId
   replyBeUserId.value = beUserId
+}
+
+const deleteComment = async (id: string, commentId: string) => {
+  await commentStore.deleteCommentAction(id)
+  if (commentId == '') {
+    busy.value = false
+    offset.value = 0
+    comments.value = []
+    getCommentList()
+  } else {
+    getReply(commentId)
+  }
 }
 </script>
 <style scoped lang="less"></style>

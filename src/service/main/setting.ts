@@ -10,7 +10,7 @@ export interface AvatarType {
 }
 
 export interface UserInfoType {
-  id: number
+  id: string
   name: string
   avatarUrl?: string
   email: string
@@ -27,7 +27,7 @@ export const uploadAvatar = (data: FormData) => {
   })
 }
 
-export const getUserInfoById = (id: number) => {
+export const getUserInfoById = (id: string) => {
   return myRequest.get<IDataType<UserInfoType>>({
     url: `/users/message?id=${id}`,
   })

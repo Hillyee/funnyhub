@@ -3,6 +3,7 @@ import {
   updateMomentRequest,
   getMomentListRequest,
   searchMomentListReq,
+  userMomentRequset,
 } from '@/service/main/moment'
 import { defineStore } from 'pinia'
 import { setLabelRequset } from '@/service/main/label'
@@ -65,11 +66,11 @@ export const useMomentStore = defineStore('moment', {
         return res.data
       }
     },
-    userMomentAction(userId: number) {
-      const list = this.momentList.filter((item: MomentType) => {
-        return item.author.id == userId
-      })
-      return list
+    async userMomentAction(userId: string | string[]) {
+      const res = await userMomentRequset(userId)
+      if (res.code == 200) {
+        return res.data
+      }
     },
   },
 })

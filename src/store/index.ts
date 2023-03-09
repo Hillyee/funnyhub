@@ -3,6 +3,7 @@ import { useUserStore } from './user'
 import { useMomentStore } from './moment'
 import { useGlobalStore } from './global'
 import { useCommentStore } from './comment'
+import { useFollowerStore } from './follower'
 
 const pinia = createPinia()
 
@@ -12,6 +13,12 @@ export function setupStore() {
   userStore.loadLoaclLogin()
 }
 
-export { useUserStore, useMomentStore, useGlobalStore, useCommentStore }
+export {
+  useUserStore,
+  useMomentStore,
+  useGlobalStore,
+  useCommentStore,
+  useFollowerStore,
+}
 
 export default pinia
