@@ -49,7 +49,7 @@ export const useMomentStore = defineStore('moment', {
         return result
       }
     },
-    async setLabel(momentId: number, labels: string[]) {
+    async setLabel(momentId: string, labels: string[]) {
       await setLabelRequset(momentId, labels)
     },
     async momentListAction(limit: number, offset: number) {

@@ -2,13 +2,24 @@
   <div class="container">
     <main>
       <div class="py-5 text-center" v-if="user">
-        <img :src="user?.avatarUrl" class="rounded-circle avatar" alt="头像" />
+        <img
+          v-if="user.avatarUrl"
+          :src="user.avatarUrl"
+          class="rounded-circle avatar"
+          alt="头像"
+        />
+        <img
+          v-else
+          src="@/assets/default.png"
+          class="rounded-circle avatar"
+          alt="默认头像"
+        />
         <h2>{{ user.name }}</h2>
         <p class="lead">{{ user.sign }}</p>
         <button
           type="button"
           class="btn btn-success btn-sm"
-          v-if="isFollow == 1"
+          v-if="isFollow == 1 && user.id !== currentUser.id"
           @click="cancelFollow()"
         >
           已关注
@@ -16,7 +27,7 @@
         <button
           type="button"
           class="btn btn-success btn-sm"
-          v-else-if="isFollow == 0"
+          v-else-if="isFollow == 0 && user.id !== currentUser.id"
           @click="addFollow"
         >
           关注
@@ -72,7 +83,7 @@
           <div v-if="currentIndex == 1">
             <div
               class="d-flex text-muted pt-3 hover-class"
-              v-for="(item, index) in followerList && followerCount !== 0"
+              v-for="(item, index) in followerList"
               :key="index"
               @click="goUserPage(item.follow.id)"
             >
@@ -118,10 +129,10 @@
 
               <div class="pb-3 mb-0 small lh-sm border-bottom w-100">
                 <div class="d-flex justify-content-between">
-                  <strong class="text-gray-dark">{{ item.fans.name }}</strong>
+                  <strong class="text-gray-dark">{{ item.fans?.name }}</strong>
                   <!-- <a href="#">Follow</a> -->
                 </div>
-                <span class="d-block">个性签名：{{ item.fans.sign }}</span>
+                <span class="d-block">个性签名：{{ item.fans?.sign }}</span>
               </div>
             </div>
           </div>

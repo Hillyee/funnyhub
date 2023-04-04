@@ -3,19 +3,20 @@ import { IDataType } from '../type'
 
 // 动态类型
 export interface MomentType {
-  id: number
+  id: string
   title: string
   content: string
   description?: string | null
   createTime: string
   updateTime: string
   momentUrl?: string
+  likeCount: number
   author: Author
   labels?: LabelsEntity[] | null
   images?: string[] | null
 }
 export interface Author {
-  id: number
+  id: string
   name: string
   avatarURL?: string
 }

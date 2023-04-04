@@ -27,7 +27,7 @@ export const useUserStore = defineStore('user', {
     async userLoginAction(account: IAccount, isRemember: boolean) {
       const result = await userLoginRequest(account)
 
-      if (result.code === 200) {
+      if (result?.code === 200) {
         const { token } = result.data
         this.token = token
         LocalCache.setCache('token', token)
@@ -48,7 +48,7 @@ export const useUserStore = defineStore('user', {
     },
     async getCurrentUser() {
       const res = await currentUserRequest()
-      if (res.code == 200) {
+      if (res?.code == 200) {
         this.userInfo = { isLogin: true, ...res.data }
       } else {
         return false

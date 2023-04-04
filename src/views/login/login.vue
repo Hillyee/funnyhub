@@ -10,22 +10,24 @@
           height="72"
         />
         <h1 class="h3 mb-3 fw-normal">欢迎登录</h1>
-        <validate-input
-          ref="emailInputRef"
-          v-model="emailVal"
-          type="email"
-          placeholder="name@example.com"
-          :rules="emailRules"
-          label="邮箱"
-        ></validate-input>
-        <validate-input
-          ref="passwordInputRef"
-          v-model="passwordVal"
-          type="password"
-          placeholder="Password"
-          :rules="passwordRules"
-          label="密码"
-        ></validate-input>
+        <validate-form @form-submit="onFormSubmit">
+          <validate-input
+            v-model="emailVal"
+            type="email"
+            :rules="emailRules"
+            label="邮箱"
+          ></validate-input>
+          <validate-input
+            v-model="passwordVal"
+            type="password"
+            :rules="passwordRules"
+            label="密码"
+          ></validate-input>
+
+          <template #submit>
+            <div class="w-100 btn btn-lg btn-primary">立即登录</div>
+          </template></validate-form
+        >
 
         <div class="checkbox mb-3">
           <label>
@@ -33,11 +35,9 @@
             记住密码
           </label>
         </div>
-        <div class="w-100 btn btn-lg btn-primary" @click="handleLoginClick">
-          立即登录
-        </div>
+
         <router-link to="/register">首次使用？点我注册</router-link>
-        <p class="mt-5 mb-3 text-muted">&copy; 2022</p>
+        <p class="mt-5 mb-3 text-muted">&copy; 2023</p>
       </form>
     </main>
   </div>
@@ -47,6 +47,7 @@ import { onMounted, ref } from 'vue'
 import { useUserStore } from '@/store'
 import '@/style/signin.css'
 import validateInput from '@/components/ValidateInput.vue'
+import ValidateForm from '@/components/ValidateForm.vue'
 import { RulesProp } from '@/components/types'
 import { IAccount } from '@/service/login/type'
 import LocalCache from '@/utils/cache'
@@ -80,13 +81,23 @@ const passwordRules: RulesProp = [{ type: 'required', message: '密码不能为�
 const isRemember = ref(false)
 
 const loginStore = useUserStore()
-const emailInputRef = ref<any>(null)
-const passwordInputRef = ref<any>(null)
-const handleLoginClick = () => {
-  // 点击登录先校验一下
-  const validateEmailRes = emailInputRef.value.validateInput()
-  const validatePawRes = passwordInputRef.value.validateInput()
-  if (validateEmailRes && validatePawRes) {
+// const handleLoginClick = () => {
+//   // 点击登录先校验一下
+//   const validateEmailRes = emailInputRef.value.validateInput()
+//   const validatePawRes = passwordInputRef.value.validateInput()
+//   if (validateEmailRes && validatePawRes) {
+//     const account: IAccount = {
+//       email: emailVal.value,
+//       password: passwordVal.value,
+//     }
+//     loginStore.userLoginAction(account, isRemember.value)
+//   }
+// }
+
+const onFormSubmit = (result: boolean) => {
+  // 提交
+  if (result) {
+    // 验证通过
     const account: IAccount = {
       email: emailVal.value,
       password: passwordVal.value,

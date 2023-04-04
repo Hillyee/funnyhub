@@ -6,21 +6,21 @@ export interface ILabel {
   data?: labelEntity[] | null
 }
 export interface labelEntity {
-  id: number
+  id: string
   name: string
   createAt: string
   updateAt: string
 }
 
-export const reqLabelList = (limit: number, offset: number) => {
-  return myRequest.get<IDataType<ILabel>>({
-    url: `/label?limit=${limit}&offset=${offset}`,
-  })
-}
+// export const reqLabelList = (limit: number, offset: number) => {
+//   return myRequest.get<IDataType<ILabel>>({
+//     url: `/label?limit=${limit}&offset=${offset}`,
+//   })
+// }
 
-export const setLabelRequset = (momentId: number, labels: string[]) => {
+export const setLabelRequset = (momentId: string, labels: string[]) => {
   return myRequest.post<IDataType>({
-    url: `/moment/${momentId}/labels`,
+    url: `/label/${momentId}`,
     data: {
       labels,
     },

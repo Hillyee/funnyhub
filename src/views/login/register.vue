@@ -1,7 +1,8 @@
 <template>
   <div class="text-center">
-    <main class="form-signin w-100 m-auto">
-      <form>
+    <main class="m-auto px-4 py-3 my-5 col-lg-6 form-signin max-w-200 m-auto">
+      <h1 class="h3 mb-3 fw-normal">欢迎注册</h1>
+      <validate-form @form-submit="onFormSubmit">
         <img
           class="mb-4"
           src="@/assets/share.png"
@@ -9,57 +10,42 @@
           width="72"
           height="72"
         />
-        <h1 class="h3 mb-3 fw-normal">欢迎注册</h1>
 
         <validate-input
-          ref="emailInputRef"
-          v-model="emailVal"
-          type="email"
-          placeholder="name@example.com"
+          class="w-100"
           :rules="emailRules"
+          v-model="emailVal"
           label="邮箱"
-        ></validate-input>
+        />
+        <validate-input :rules="nameRules" v-model="nameVal" label="昵称" />
         <validate-input
-          ref="nameInputRef"
-          v-model="nameVal"
-          type="text"
-          placeholder="name"
-          :rules="nameRules"
-          label="昵称"
-        ></validate-input>
-        <validate-input
-          ref="passwordInputRef"
+          :rules="passwordRules"
           v-model="passwordVal"
           type="password"
-          placeholder="Password"
-          :rules="passwordRules"
           label="密码"
-        ></validate-input>
+        />
         <validate-input
-          ref="passwordInputRef2"
           v-model="passwordVal2"
           type="password"
-          placeholder="Password"
           :rules="passwordRules2"
           label="确认密码"
         ></validate-input>
-        <div
-          class="w-100 btn btn-lg btn-primary"
-          type="submit"
-          @click="handleRegisterClick"
-        >
-          立即注册
-        </div>
-        <router-link to="/login">返回登录</router-link>
-        <p class="mt-5 mb-3 text-muted">&copy; 2022</p>
-      </form>
+        <template #submit>
+          <button type="submit" class="w-100 btn btn-lg btn-primary">
+            立即注册
+          </button>
+        </template>
+      </validate-form>
+      <router-link to="/login">返回登录</router-link>
+      <p class="mt-5 mb-3 text-muted">&copy; 2022</p>
     </main>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { ref } from 'vue'
-import validateInput from '@/components/ValidateInput.vue'
+import ValidateInput from '@/components/ValidateInput.vue'
+import ValidateForm from '@/components/ValidateForm.vue'
 import { RulesProp } from '@/components/types'
 import { useUserStore } from '@/store'
 import { IAccount } from '@/service/login/type'
@@ -90,17 +76,12 @@ const passwordRules2: RulesProp = [
   },
 ]
 
-const nameInputRef = ref<any>(null)
-const emailInputRef = ref<any>(null)
-const passwordInputRef = ref<any>(null)
-const passwordInputRef2 = ref<any>(null)
 const loginStore = useUserStore()
-const handleRegisterClick = () => {
-  // 点击登录先校验一下
-  const validateEmailRes = emailInputRef.value.validateInput()
-  const validatePawRes = passwordInputRef.value.validateInput()
-  const validateNameRes = nameInputRef.value.validateInput()
-  if (validateEmailRes && validatePawRes && validateNameRes) {
+
+const onFormSubmit = (result: boolean) => {
+  // 提交
+  if (result) {
+    // 验证通过
     const account: IAccount = {
       name: nameVal.value,
       email: emailVal.value,
@@ -111,4 +92,8 @@ const handleRegisterClick = () => {
 }
 </script>
 
-<style scoped lang="less"></style>
+<style scoped lang="less">
+.form-signin {
+  max-width: 500px;
+}
+</style>

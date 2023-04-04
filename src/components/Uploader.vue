@@ -85,6 +85,8 @@ const handleFileChange = (e: Event) => {
     const formData = new FormData()
     formData.append(props.uploadType, files[0])
 
+    console.log(props.uploadType)
+
     const uploadAPI =
       props.uploadType === 'avatar' ? uploadAvatar : momentPicture
 

@@ -1,28 +1,60 @@
 <template>
-  <div class="form-floating">
-    <input
+  <div class="input-group mb-3">
+    <span class="input-group-text" id="basic-addon1">{{ label }}</span>
+    <textarea
+      v-if="tag == 'textarea'"
       class="form-control"
       v-model="inputRef.val"
+      :aria-label="label"
+      aria-describedby="basic-addon1"
       v-bind="$attrs"
       @blur="validateInput"
       :class="{ 'is-invalid': inputRef.error }"
-    />
-    <label for="floatingInput">{{ label }}</label>
+    ></textarea>
+
+    <div class="dropdown" v-else-if="tag == 'select'">
+      <select
+        class="btn btn-outline-secondary dropdown-toggle mx-2"
+        aria-expanded="false"
+        v-model="inputRef.val"
+      >
+        <option
+          v-for="(item, index) in selectList"
+          :key="index"
+          :value="item.name"
+          class="dropdown-item"
+        >
+          {{ item.name }}
+        </option>
+      </select>
+      <button type="button" class="btn btn-link" @click="getLabels">
+        获取更多标签
+      </button>
+    </div>
+
+    <div v-else class="d-flex justify-content-between">
+      <input
+        type="text"
+        class="form-control"
+        v-model="inputRef.val"
+        :aria-label="label"
+        aria-describedby="basic-addon1"
+        v-bind="$attrs"
+        @blur="validateInput"
+        :class="{ 'is-invalid': inputRef.error }"
+      />
+      <slot></slot>
+    </div>
     <div v-if="inputRef.error" class="errortext">{{ inputRef.message }}!!</div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import {
-  defineProps,
-  defineEmits,
-  defineExpose,
-  PropType,
-  reactive,
-  ref,
-  watch,
-} from 'vue'
+import { PropType, reactive, watch, onMounted, inject, ref } from 'vue'
 import { RulesProp } from './types'
+import { labelType } from '@/service/main/label'
+
+export type TagType = 'input' | 'textarea' | 'select'
 const props = defineProps({
   modelValue: String,
   rules: {
@@ -31,8 +63,15 @@ const props = defineProps({
   label: {
     type: String,
   },
+  tag: {
+    type: String as PropType<TagType>,
+    default: 'input',
+  },
+  selectList: {
+    type: Array as PropType<labelType>,
+  },
 })
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue', 'getLabelList'])
 
 const inputRef = reactive({
   val: props.modelValue || '',
@@ -45,6 +84,14 @@ watch(
   () => props.modelValue,
   () => {
     inputRef.val = props.modelValue as string
+  }
+)
+
+const selectData = ref<labelType>([])
+watch(
+  () => props.selectList,
+  () => {
+    selectData.value = props.selectList as any
   }
 )
 // 定义规则
@@ -79,7 +126,14 @@ const validateInput = () => {
   }
   return true
 }
+const emitter = inject('emitter') as any
+onMounted(() => {
+  emitter.emit('form-item-created', validateInput)
+})
 
+const getLabels = () => {
+  emit('getLabelList')
+}
 defineExpose({
   validateInput,
 })
@@ -89,6 +143,8 @@ defineExpose({
 .errortext {
   color: rgb(212, 75, 75);
   font-size: 14px;
+  padding-top: 10px;
+  padding-left: 10px;
 }
 .bd-placeholder-img {
   font-size: 1.125rem;
@@ -140,9 +196,5 @@ defineExpose({
   text-align: center;
   white-space: nowrap;
   -webkit-overflow-scrolling: touch;
-}
-
-.is-invalid {
-  margin-bottom: 10px;
 }
 </style>

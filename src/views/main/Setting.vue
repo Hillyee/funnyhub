@@ -3,14 +3,18 @@
     <uploader
       action="/upload"
       :beforeUpload="uploadCheck"
+      :uploaded="uploadedData"
       @file-uploaded="handleFileUploaded"
-      uploadType="picture"
+      uploadType="avatar"
       class="d-flex align-items-center justify-content-center"
     >
-      <div class="avatar-container">
-        <img v-if="avatarVal" :src="avatarVal" alt="头像" />
-        <img v-else src="@/assets/default.png" alt="默认头像" />
-      </div>
+      <template #default>
+        <div class="avatar-container">
+          <img v-if="avatarUrl" :src="avatarUrl" alt="头像" />
+          <img v-else src="@/assets/default.png" alt="默认头像" />
+        </div>
+      </template>
+
       <template #loading>
         <div
           class="avatar-container d-flex align-items-center justify-content-center"
@@ -18,6 +22,12 @@
           <div class="spinner-border text-secondary" role="status">
             <span class="visually-hidden">Loading...</span>
           </div>
+        </div>
+      </template>
+
+      <template #uploaded="dataProps">
+        <div class="uploaded-area">
+          <img :src="dataProps.uploadedData?.url" alt="" width="100" />
         </div>
       </template>
     </uploader>
@@ -68,10 +78,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, onMounted, inject } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import { useUserStore } from '@/store'
 import ValidateForm from '@/components/ValidateForm.vue'
-import ValidateInput from '@/components/ValidateInput2.vue'
+import ValidateInput from '@/components/ValidateInput.vue'
 import Uploader from '@/components/Uploader.vue'
 import { RulesProp } from '@/components/types'
 import createMessage from '@/components/createMessage'
@@ -86,7 +96,7 @@ const userStore = useUserStore()
 const userInfo = computed(() => userStore.userInfo)
 
 const signVal = ref('')
-const avatarVal = ref('')
+const avatarUrl = ref('')
 const emailVal = ref('')
 const nameVal = ref('')
 
@@ -95,14 +105,20 @@ const emailRules: RulesProp = [
   { type: 'email', message: '请输入正确的电子邮箱格式' },
 ]
 const nameRules: RulesProp = [{ type: 'required', message: '昵称不能为空' }]
+const uploadedData = ref()
+onMounted(() => {
+  getUserInfoById(userInfo.value.id).then(res => {
+    const { avatarUrl, sign, email, name } = res.data
+    signVal.value = sign
+    emailVal.value = email
 
-// 根据id获取用户信息
-getUserInfoById(userInfo.value.id).then(res => {
-  const { avatarUrl, sign, email, name } = res.data
-  signVal.value = sign
-  emailVal.value = email
-  avatarVal.value = avatarUrl as string
-  nameVal.value = name
+    nameVal.value = name
+    if (avatarUrl) {
+      uploadedData.value = {
+        url: avatarUrl,
+      }
+    }
+  })
 })
 
 const onFormSubmit = (result: boolean) => {
@@ -112,12 +128,12 @@ const onFormSubmit = (result: boolean) => {
       name: nameVal.value,
       sign: signVal.value,
       email: emailVal.value,
+      avatarUrl: avatarUrl.value,
     })
   }
 }
 
 // 个性签名
-
 const uploadCheck = (file: File) => {
   const result = beforeUploadCheck(file, {
     format: ['image/jpeg', 'image/png'],
@@ -133,13 +149,10 @@ const uploadCheck = (file: File) => {
   return passed
 }
 
-const reloadFn: reloadType = inject('reload') as reloadType
 const handleFileUploaded = (rawData: IDataType<AvatarType>) => {
   createMessage('上传头像成功', 'success')
-  setTimeout(() => {
-    reloadFn() // 刷新
-  }, 500)
   userStore.updateUserAvatar(rawData.data.avatarUrl)
+  avatarUrl.value = rawData.data.avatarUrl
 }
 
 // 加载用户信息

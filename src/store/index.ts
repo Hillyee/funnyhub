@@ -4,6 +4,7 @@ import { useMomentStore } from './moment'
 import { useGlobalStore } from './global'
 import { useCommentStore } from './comment'
 import { useFollowerStore } from './follower'
+import { useLikeStore } from './like'
 
 const pinia = createPinia()
 
@@ -19,6 +20,7 @@ export {
   useGlobalStore,
   useCommentStore,
   useFollowerStore,
+  useLikeStore,
 }
 
 export default pinia

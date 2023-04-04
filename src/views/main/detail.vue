@@ -2,7 +2,25 @@
   <div class="detail">
     <div class="px-4 py-5 my-5 text-center">
       <img class="mb-4 w-50" :src="momentDetail?.momentUrl" />
-      <h1 class="display-5 fw-bold">{{ momentDetail?.title }}</h1>
+      <h1 class="display-5 fw-bold d-block">
+        {{ momentDetail?.title
+        }}<span class="fs-4 text"
+          >点赞:
+          <img
+            v-if="likeStatus"
+            src="@/assets/icon/hand-thumbs-up-fill.svg"
+            alt=""
+            style="width: 25px; cursor: pointer"
+            @click="cancelLike(momentDetail?.id, momentDetail?.author.id)" />
+          <img
+            v-else
+            src="@/assets/icon/hand-thumbs-up.svg"
+            alt=""
+            style="width: 25px; cursor: pointer"
+            @click="addLike(momentDetail?.id, momentDetail?.author.id)"
+        /></span>
+      </h1>
+
       <p>{{ momentDetail?.description }}</p>
       <button
         v-if="momentDetail?.author.id + '' == userId"
@@ -199,7 +217,7 @@ import { CommentType, addReplyType } from '@/service/main/comment'
 import { IDataType } from '@/service/type'
 import createMessage from '@/components/createMessage'
 import Modal from '@/components/Modal.vue'
-import { useUserStore, useCommentStore } from '@/store'
+import { useUserStore, useCommentStore, useLikeStore } from '@/store'
 import { formatUtcString } from '@/utils/date-format'
 type reloadType = () => void
 const route = useRoute()
@@ -244,6 +262,8 @@ const currentMomentId = ref()
 onMounted(async () => {
   currentMomentId.value = route.params.id
   getCommentList()
+  // 获取点赞状态
+  getLikeStatus(currentMomentId.value)
 })
 
 // busy代表是否禁用滚动事件
@@ -263,8 +283,6 @@ const getCommentList = async () => {
       limit.value,
       offset.value
     )
-    console.log(res)
-
     if (res?.length !== 0) {
       if (comments.value?.length !== 0) {
         console.log(comments.value)
@@ -345,6 +363,24 @@ const deleteComment = async (id: string, commentId: string) => {
   } else {
     getReply(commentId)
   }
+}
+
+// 点赞
+const likeStore = useLikeStore()
+const likeStatus = ref()
+const getLikeStatus = async (momentId: string) => {
+  const status = await likeStore.getLikeStatusAction(momentId)
+  likeStatus.value = status
+}
+
+const cancelLike = async (momentId: string = '', beUserId: string = '') => {
+  await likeStore.cancelLikeAction(momentId, beUserId)
+  getLikeStatus(momentId)
+}
+
+const addLike = async (momentId: string = '', beUserId: string = '') => {
+  await likeStore.addLikeAction(momentId, beUserId)
+  getLikeStatus(momentId)
 }
 </script>
 <style scoped lang="less"></style>

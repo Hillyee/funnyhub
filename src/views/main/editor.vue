@@ -8,7 +8,6 @@
         data-bs-toggle="modal"
         data-bs-target="#exampleModal"
         data-bs-whatever="@mdo"
-        @click="onPublic"
       >
         发布
       </button>
@@ -48,10 +47,30 @@
                   class="form-control"
                   label="标签"
                   v-model="labelVal"
-                  tag="select"
-                  :selectList="selectList"
-                  @getLabelList="getLabelList"
-                />
+                  ><button
+                    type="button"
+                    style="line-height: 30px; width: 100px"
+                    @click="addLabel"
+                  >
+                    添加
+                  </button>
+                </ValidateInput>
+                <div>
+                  <button
+                    type="button"
+                    class="btn btn-secondary"
+                    v-for="(item, index) in labelArr"
+                    :key="index"
+                    style="margin-right: 10px"
+                  >
+                    <span
+                      >{{ item }}&nbsp;&nbsp;&nbsp;<span
+                        @click="deleteLabel(index)"
+                        >X</span
+                      ></span
+                    >
+                  </button>
+                </div>
               </div>
               <div class="mb-3">
                 <ValidateInput
@@ -129,10 +148,9 @@ import { useMomentStore } from '@/store'
 import LocalCache from '@/utils/cache'
 import createMessage from '@/components/createMessage'
 import ValidateForm from '@/components/ValidateForm.vue'
-import ValidateInput from '@/components/ValidateInput2.vue'
+import ValidateInput from '@/components/ValidateInput.vue'
 import Uploader from '@/components/Uploader.vue'
 import { beforeUploadCheck } from '@/utils/uploadCheck'
-import { reqLabelList } from '@/service/main/label'
 import { IPictureType, getMomentByIdRequest } from '@/service/main/moment'
 import { useRoute } from 'vue-router'
 
@@ -140,6 +158,7 @@ const route = useRoute()
 const content = ref('')
 const title = ref('')
 const labelVal = ref('')
+const labelArr = ref<Array<string>>([])
 const descriptionVal = ref('')
 
 // 返回首页
@@ -148,23 +167,15 @@ const handleGoHomeClick = () => {
   router.push('/home')
 }
 
-let selectList = ref()
-let limit = ref(5)
-let offset = ref(0)
-const onPublic = async () => {
-  // 弹窗
-  const res = await reqLabelList(limit.value, offset.value)
-  selectList.value = res.data
-}
-const getLabelList = async () => {
-  let newLimit = limit.value + 5
-  let newOffset = offset.value + 5
-  const res = await reqLabelList(newLimit, newOffset)
-  for (let i in res.data) {
-    selectList.value.push(res.data[i])
-  }
-  labelVal.value = selectList.value[0].name
-}
+// const getLabelList = async () => {
+//   let newLimit = limit.value + 5
+//   let newOffset = offset.value + 5
+//   const res = await reqLabelList(newLimit, newOffset)
+//   for (let i in res.data) {
+//     selectList.value.push(res.data[i])
+//   }
+//   labelVal.value = selectList.value[0].name
+// }
 
 const uploadCheck = (file: File) => {
   const result = beforeUploadCheck(file, {
@@ -200,7 +211,13 @@ onMounted(() => {
       const momentDetail = res.data
       content.value = momentDetail.content
       title.value = momentDetail.title
-      labelVal.value = momentDetail.labels ? momentDetail.labels[0].name : ''
+      if (momentDetail.labels) {
+        const arr = momentDetail.labels.map((item: any) => item.name)
+        labelArr.value = arr
+      } else {
+        labelArr.value = []
+      }
+
       descriptionVal.value = momentDetail.description || ''
       if (momentDetail.momentUrl) {
         uploadedData.value = { url: momentDetail.momentUrl }
@@ -211,14 +228,12 @@ onMounted(() => {
 const handlePublicClick = async () => {
   const token = LocalCache.getCache('token')
   const publicType = route.params.publicType || 'add'
-  console.log(publicType)
-
   if (!token) {
     router.push('/login')
   } else if (!content.value || !title.value) {
     createMessage('内容或标题不能为空', 'default')
   } else {
-    let momentId: number
+    let momentId: string
     if (publicType == 'add') {
       const res = await momentStore.momentPublicAction(
         title.value,
@@ -229,7 +244,7 @@ const handlePublicClick = async () => {
       if (res?.code == 200) {
         momentId = res.data.id
         // 调用保存动态与标签联系的接口
-        await momentStore.setLabel(momentId, [labelVal.value])
+        await momentStore.setLabel(momentId, labelArr.value)
         createMessage('发布成功', 'success')
         router.push(`/detail/${momentId}`)
       }
@@ -245,13 +260,22 @@ const handlePublicClick = async () => {
       if (res?.code == 200) {
         momentId = res.data.id
         // 调用保存动态与标签联系的接口
-        await momentStore.setLabel(momentId, [labelVal.value])
+        await momentStore.setLabel(momentId, labelArr.value)
         createMessage('修改成功', 'success')
         router.push(`/detail/${momentId}`)
       }
     }
     closeBtnRef.value?.click()
   }
+}
+
+const addLabel = () => {
+  labelArr.value.push(labelVal.value)
+  labelVal.value = ''
+}
+
+const deleteLabel = (index: number) => {
+  labelArr.value.splice(index, 1)
 }
 </script>
 

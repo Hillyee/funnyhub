@@ -74,13 +74,26 @@
                   <h4 class="card-text">
                     {{ item.title }}
                   </h4>
+                  <span v-if="item.labels"
+                    ><button
+                      v-for="(label, index) in item.labels"
+                      :key="index"
+                      type="button"
+                      class="btn btn-secondary btn-sm"
+                      style="margin-right: 10px"
+                    >
+                      {{ label.name }}
+                    </button></span
+                  >
                   <div class="d-flex justify-content-between">
                     <span>{{ item.description }}</span>
+                    <span>点赞数：{{ item.likeCount }}</span>
                     <span
                       class="text-muted author-hover"
                       @click="goUserPage(item)"
                     >
-                      | {{ item.author?.name }}</span
+                      |
+                      {{ item.author?.name }}</span
                     >
                   </div>
                   <div
@@ -116,14 +129,7 @@
         <p class="float-end mb-1">
           <a href="#">Back to top</a>
         </p>
-        <p class="mb-1">
-          Album example is &copy; Bootstrap, but please download and customize
-          it for yourself!
-        </p>
-        <p class="mb-0">
-          New to Bootstrap? <a href="/">Visit the homepage</a> or read our
-          <a href="../getting-started/introduction/">getting started guide</a>.
-        </p>
+        <p class="mb-1">@2023</p>
       </div>
     </footer>
   </div>

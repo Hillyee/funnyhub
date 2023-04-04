@@ -40,7 +40,19 @@
     <div class="navbar navbar-dark bg-dark shadow-sm">
       <div class="container">
         <div>
-          <img :src="user.avatarUrl" class="rounded-circle avatar" alt="头像" />
+          <img
+            v-if="user.avatarUrl"
+            :src="user.avatarUrl"
+            class="rounded-circle avatar"
+            alt="头像"
+          />
+
+          <img
+            v-else
+            src="@/assets/default.png"
+            class="rounded-circle avatar"
+            alt="默认头像"
+          />
 
           <router-link class="btn text-white fs-5" to="/home"
             ><img
@@ -68,7 +80,7 @@
   </header>
   <header v-else class="navbar navbar-dark bg-dark">
     <div class="container">
-      <router-link to="/home" class="navbar-brand" href="#"
+      <router-link to="/home" class="navbar-brand"
         >好好生活-分享专栏</router-link
       >
       <ul class="list-inline mb-0">
@@ -109,6 +121,7 @@ const globalStore = useGlobalStore()
 const handleLogout = () => {
   globalStore.setLoading()
   loginStore.logout()
+  router.push('/login')
 }
 </script>
 
