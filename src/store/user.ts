@@ -11,7 +11,7 @@ import router from '@/router'
 import passwordCode from '@/utils/base64'
 import createMessage from '@/components/createMessage'
 import { UserInfoType } from '@/service/main/setting'
-import { updateUserInfo } from '@/service/main/setting'
+import { updateUserInfo, updateUserPwd } from '@/service/main/setting'
 import { UserProps } from '@/components/types'
 
 export const useUserStore = defineStore('user', {
@@ -21,6 +21,7 @@ export const useUserStore = defineStore('user', {
       userInfo: {
         isLogin: false,
       } as UserProps,
+      isadmin: 0,
     }
   },
   actions: {
@@ -28,7 +29,7 @@ export const useUserStore = defineStore('user', {
       const result = await userLoginRequest(account)
 
       if (result?.code === 200) {
-        const { token } = result.data
+        const { token, isadmin } = result.data
         this.token = token
         LocalCache.setCache('token', token)
         if (isRemember) {
@@ -40,9 +41,15 @@ export const useUserStore = defineStore('user', {
           LocalCache.removeCache('email')
         }
         await this.getCurrentUser()
-        createMessage('登录成功 2秒后跳转首页', 'success')
+        createMessage('登录成功', 'success')
+
         setTimeout(() => {
-          router.push('/home')
+          if (isadmin == 1) {
+            this.isadmin = 1
+            router.push('/manage')
+          } else {
+            router.push('/home')
+          }
         }, 2000)
       }
     },
@@ -90,6 +97,10 @@ export const useUserStore = defineStore('user', {
     async getUserAction(id: string | string[]) {
       const res = await getUserRequest(id)
       return res.data
+    },
+    async updateUserPwdAction(email: string, pwd: string, newPwd: string) {
+      const res = await updateUserPwd(email, pwd, newPwd)
+      return res
     },
   },
 })

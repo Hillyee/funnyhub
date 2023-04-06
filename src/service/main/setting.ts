@@ -39,3 +39,15 @@ export const updateUserInfo = (data: UserInfoType) => {
     data,
   })
 }
+
+// 修改密码
+export const updateUserPwd = (email: string, pwd: string, newPwd: string) => {
+  return myRequest.post<IDataType>({
+    url: '/users/update/pwd',
+    data: {
+      email,
+      password: pwd,
+      newPassword: newPwd,
+    },
+  })
+}

@@ -28,6 +28,8 @@ declare module '@vue/runtime-core' {
     Modal: typeof import('./src/components/Modal.vue')['default']
     NavCard: typeof import('./src/components/nav-card.vue')['default']
     NavHeader: typeof import('./src/components/nav-header.vue')['default']
+    Paganation: typeof import('./src/components/Paganation.vue')['default']
+    Pagination: typeof import('./src/components/Pagination.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Uploader: typeof import('./src/components/Uploader.vue')['default']

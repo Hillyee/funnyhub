@@ -178,7 +178,7 @@ const getLists = async () => {
       listQuery.limit,
       listQuery.offset
     )
-    if (res?.length !== 0) {
+    if (res && res?.length !== 0) {
       if (momentList.value.length !== 0) {
         momentList.value = momentList.value.concat(res)
         busy.value = false

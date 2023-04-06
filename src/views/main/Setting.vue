@@ -67,6 +67,7 @@
             </div>
           </div>
         </div>
+
         <template #submit>
           <button type="submit" class="btn btn-secondary btn-block btn-large">
             确认提交
@@ -74,6 +75,60 @@
         </template>
       </validate-form>
     </div>
+    <div class="col-lg-6 mx-auto">
+      <div class="row g-3">
+        <div class="col-12">
+          <div class="input-group has-validation">
+            <button @click.prevent="modalIsVisible = true">修改密码</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <modal
+      title="修改密码"
+      :visible="modalIsVisible"
+      @model-on-close="modalIsVisible = false"
+    >
+      <validate-form @form-submit="onPwdSubmit">
+        <div class="row g-3">
+          <div class="col-12">
+            <div class="input-group has-validation">
+              <validate-input
+                :rules="passwordRules"
+                v-model="oldpasswordVal"
+                type="password"
+                label="旧密码"
+              />
+              <validate-input
+                :rules="passwordRules"
+                v-model="passwordVal"
+                type="password"
+                label="新密码"
+              />
+              <validate-input
+                v-model="passwordVal2"
+                type="password"
+                :rules="passwordRules2"
+                label="确认密码"
+              ></validate-input>
+            </div>
+          </div>
+        </div>
+
+        <template #submit>
+          <button
+            class="btn btn-lg btn-secondary"
+            @click="modalIsVisible = false"
+          >
+            取消
+          </button>
+          <button type="submit" class="btn btn-lg btn-primary">确认</button>
+        </template></validate-form
+      >
+      <template #btn>
+        <div>&nbsp;</div>
+      </template>
+    </modal>
   </div>
 </template>
 
@@ -89,8 +144,7 @@ import { beforeUploadCheck } from '@/utils/uploadCheck'
 import { IDataType } from '@/service/type'
 import { AvatarType } from '@/service/main/setting'
 import { getUserInfoById } from '@/service/main/setting'
-
-type reloadType = () => void
+import Modal from '@/components/Modal.vue'
 
 const userStore = useUserStore()
 const userInfo = computed(() => userStore.userInfo)
@@ -155,7 +209,39 @@ const handleFileUploaded = (rawData: IDataType<AvatarType>) => {
   avatarUrl.value = rawData.data.avatarUrl
 }
 
-// 加载用户信息
+const modalIsVisible = ref(false)
+const oldpasswordVal = ref('')
+const passwordVal = ref('')
+const passwordVal2 = ref('')
+const passwordRules: RulesProp = [{ type: 'required', message: '密码不能为空' }]
+const passwordRules2: RulesProp = [
+  { type: 'required', message: '密码不能为空' },
+  {
+    type: 'custom',
+    validator: () => {
+      return passwordVal.value === passwordVal2.value
+    },
+    message: '两次输入的密码不一致',
+  },
+]
+const onPwdSubmit = async (result: boolean) => {
+  if (result) {
+    const res = await userStore.updateUserPwdAction(
+      emailVal.value,
+      oldpasswordVal.value,
+      passwordVal.value
+    )
+    if (res.code == 200) {
+      createMessage('修改成功', 'success')
+    } else {
+      createMessage('修改失败', 'error')
+    }
+  }
+  oldpasswordVal.value = ''
+  passwordVal.value = ''
+  passwordVal2.value = ''
+  modalIsVisible.value = false
+}
 </script>
 
 <style scoped lang="less">

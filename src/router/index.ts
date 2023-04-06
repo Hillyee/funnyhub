@@ -5,6 +5,7 @@ import detail from '@/router/main/detail'
 import editor from '@/router/main/editor'
 import user from '@/router/main/user'
 import setting from '@/router/main/setting'
+import manage from '@/router/admin/manage'
 import { useGlobalStore, useUserStore } from '@/store'
 import createMessage from '@/components/createMessage'
 
@@ -29,6 +30,7 @@ const routes: RouteRecordRaw[] = [
   editor,
   user,
   setting,
+  manage,
 ]
 
 const router = createRouter({

@@ -9,9 +9,13 @@ export interface UserType {
   email?: string
   sign?: string
 }
+export interface LoginType {
+  token: string
+  isadmin: number
+}
 
 export const userLoginRequest = (data: IAccount) => {
-  return myRequest.post<IDataType>({
+  return myRequest.post<IDataType<LoginType>>({
     url: '/login',
     data,
   })

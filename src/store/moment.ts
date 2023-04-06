@@ -62,13 +62,13 @@ export const useMomentStore = defineStore('moment', {
     // 搜索动态
     async searchListAction(queryObject: queryObject) {
       const res = await searchMomentListReq(queryObject)
-      if (res.code == 200) {
+      if (res?.code == 200) {
         return res.data
       }
     },
     async userMomentAction(userId: string | string[]) {
       const res = await userMomentRequset(userId)
-      if (res.code == 200) {
+      if (res?.code == 200) {
         return res.data
       }
     },

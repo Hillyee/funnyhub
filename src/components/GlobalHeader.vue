@@ -24,6 +24,13 @@
                   >个人主页</router-link
                 >
               </li>
+              <li v-if="loginStore.isadmin == 1">
+                <router-link
+                  class="btn btn-link text-white fs-5"
+                  to="/manage/user"
+                  >返回管理页面</router-link
+                >
+              </li>
               <li>
                 <button
                   class="btn btn-link text-white fs-5"
