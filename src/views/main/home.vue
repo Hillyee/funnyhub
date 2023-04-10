@@ -4,9 +4,9 @@
       <section class="py-5 text-center container">
         <div class="row py-lg-5">
           <div class="col-lg-6 col-md-8 mx-auto">
-            <h1 class="fw-light">Live a good life and meet slowly</h1>
+            <h1 class="fw-light">学无止境，进取不息。</h1>
             <p class="lead text-muted">
-              In the busy days, don't forget to live well. Love yourself
+              欢迎来到博客，这里是分享个人见解和经验的地方。这里涉及的主题包括但不限于技术、编程、生活和旅行等方面。感谢你的光临，希望你能在这里找到有价值的内容。
             </p>
 
             <p>

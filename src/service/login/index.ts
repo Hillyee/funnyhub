@@ -8,6 +8,7 @@ export interface UserType {
   avatarUrl?: string
   email?: string
   sign?: string
+  isadmin?: number
 }
 export interface LoginType {
   token: string

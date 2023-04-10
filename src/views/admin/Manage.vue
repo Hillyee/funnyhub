@@ -20,6 +20,7 @@
               :to="item.path"
               class="nav-link"
               @click="changeCurrentIndex(item, menu)"
+              :class="{ active: $route.path === item.path }"
             >
               <svg class="bi pe-none me-2" width="16" height="16">
                 <use xlink:href="#home" />

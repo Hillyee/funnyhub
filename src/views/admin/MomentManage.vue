@@ -21,7 +21,7 @@
             {{ item.content }}
           </th>
           <th scope="row">{{ item.likeCount }}</th>
-          <th scope="row">{{ formatUtcString(item.updateTime) }}</th>
+          <th scope="row">{{ formatUtcString(item.updateAt) }}</th>
           <th scope="row">
             <button @click="getDetail(item.id)">查看</button>
             <button @click="deleteMoment(item.id)">删除</button>

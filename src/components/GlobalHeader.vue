@@ -24,7 +24,7 @@
                   >个人主页</router-link
                 >
               </li>
-              <li v-if="loginStore.isadmin == 1">
+              <li v-if="isadmin == 1">
                 <router-link
                   class="btn btn-link text-white fs-5"
                   to="/manage/user"
@@ -88,7 +88,7 @@
   <header v-else class="navbar navbar-dark bg-dark">
     <div class="container">
       <router-link to="/home" class="navbar-brand"
-        >好好生活-分享专栏</router-link
+        >知识分享-共同学习</router-link
       >
       <ul class="list-inline mb-0">
         <li class="list-inline-item">
@@ -113,7 +113,7 @@
 </template>
 
 <script lang="ts" setup>
-import { PropType } from 'vue'
+import { PropType, computed, ref } from 'vue'
 import { UserProps } from './types'
 import { useUserStore, useGlobalStore } from '@/store'
 import router from '@/router'
@@ -130,6 +130,9 @@ const handleLogout = () => {
   loginStore.logout()
   router.push('/login')
 }
+const isadmin = computed(() => {
+  return loginStore.userInfo.isadmin
+})
 </script>
 
 <style scoped lang="less">

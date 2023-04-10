@@ -75,38 +75,41 @@
           </ul>
         </div>
         <!-- 左侧文章列表 -->
-
         <div class="col-md-8 col-lg-9">
           <h4 class="mb-3">{{ navigation[currentIndex] }}</h4>
 
           <!-- 关注者 -->
           <div v-if="currentIndex == 1">
             <div
-              class="d-flex text-muted pt-3 hover-class"
               v-for="(item, index) in followerList"
               :key="index"
-              @click="goUserPage(item.follow.id)"
+              class="d-flex justify-content-between lh-sm border-bottom"
             >
-              <img
-                :src="item.follow?.avatarUrl"
-                alt=""
-                class="bd-placeholder-img flex-shrink-0 me-2 rounded"
-                width="32"
-                height="32"
-              />
+              <div
+                class="d-flex text-muted pt-3 hover-class flex-fill"
+                @click="goUserPage(item.follow.id)"
+              >
+                <img
+                  :src="item.follow?.avatarUrl"
+                  alt=""
+                  class="bd-placeholder-img flex-shrink-0 me-2 rounded"
+                  width="32"
+                  height="32"
+                />
 
-              <div class="pb-3 mb-0 small lh-sm border-bottom w-100">
-                <div class="d-flex justify-content-between">
+                <div class="pb-3 mb-0 small">
                   <strong class="text-gray-dark">{{ item.follow.name }}</strong>
-                  <button
-                    type="button"
-                    class="btn btn-secondary btn-sm"
-                    @click="onDeleteClick(item.follow.id)"
-                  >
-                    已关注
-                  </button>
+                  <span class="d-block">个性签名：{{ item.follow.sign }}</span>
                 </div>
-                <span class="d-block">个性签名：{{ item.follow.sign }}</span>
+              </div>
+              <div class="d-flex align-items-center">
+                <button
+                  type="button"
+                  class="btn btn-secondary btn-sm"
+                  @click="onDeleteClick(item.follow.id)"
+                >
+                  已关注
+                </button>
               </div>
             </div>
           </div>
@@ -130,7 +133,6 @@
               <div class="pb-3 mb-0 small lh-sm border-bottom w-100">
                 <div class="d-flex justify-content-between">
                   <strong class="text-gray-dark">{{ item.fans?.name }}</strong>
-                  <!-- <a href="#">Follow</a> -->
                 </div>
                 <span class="d-block">个性签名：{{ item.fans?.sign }}</span>
               </div>
@@ -189,15 +191,14 @@
       </div>
     </main>
     <footer class="my-5 pt-5 text-muted text-center text-small">
-      <p class="mb-1">&copy; 2022-2017 اسم الشركة</p>
-      <ul class="list-inline">
-        <li class="list-inline-item"><a href="#">سياسة الخصوصية</a></li>
-        <li class="list-inline-item"><a href="#">اتفاقية الاستخدام</a></li>
-        <li class="list-inline-item"><a href="#">الدعم الفني</a></li>
-      </ul>
+      <p class="mb-1">&copy; 2023</p>
     </footer>
 
-    <modal title="提示" :visible="isVisibleDelete" @model-on-confirm="onConfirm"
+    <modal
+      title="提示"
+      :visible="isVisibleDelete"
+      @model-on-close="isVisibleDelete = false"
+      @model-on-confirm="onConfirm"
       >确定取消关注吗？</modal
     >
   </div>
@@ -235,7 +236,6 @@ onMounted(async () => {
   followerCount.value = res?.count
   fansCount.value = res2?.count
 })
-
 const goDetail = (id: number) => {
   window.open(`/detail/${id}`)
 }
@@ -290,8 +290,11 @@ const onDeleteClick = (id: string) => {
   isVisibleDelete.value = true
   deleteId.value = id
 }
-const onConfirm = () => {
+const onConfirm = async () => {
   cancelFollow(deleteId.value)
+  isVisibleDelete.value = false
+  const res = await followerStore.getFollowerCountAction(currentUserId.value)
+  followerCount.value = res?.count
 }
 
 const router = useRouter()

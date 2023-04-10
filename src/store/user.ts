@@ -21,7 +21,6 @@ export const useUserStore = defineStore('user', {
       userInfo: {
         isLogin: false,
       } as UserProps,
-      isadmin: 0,
     }
   },
   actions: {
@@ -45,8 +44,7 @@ export const useUserStore = defineStore('user', {
 
         setTimeout(() => {
           if (isadmin == 1) {
-            this.isadmin = 1
-            router.push('/manage')
+            router.push('/manage/user')
           } else {
             router.push('/home')
           }

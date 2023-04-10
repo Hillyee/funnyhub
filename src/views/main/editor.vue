@@ -249,6 +249,8 @@ const handlePublicClick = async () => {
         router.push(`/detail/${momentId}`)
       }
     } else if (publicType == 'edit') {
+      console.log(labelArr.value)
+
       const currentId = route.params.id
       const res = await momentStore.momentUpdateAction(
         currentId,

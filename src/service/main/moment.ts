@@ -7,8 +7,8 @@ export interface MomentType {
   title: string
   content: string
   description?: string | null
-  createTime: string
-  updateTime: string
+  createAt: string
+  updateAt: string
   momentUrl?: string
   likeCount: number
   author: Author
